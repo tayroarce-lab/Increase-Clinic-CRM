@@ -1,11 +1,25 @@
+/**
+ * BarraNavegacion.jsx - Barra de navegación principal de la aplicación.
+ * Muestra enlaces contextuales según el estado de autenticación y el rol del usuario:
+ *  - Sin sesión: "Iniciar Sesión" y "Registrarse"
+ *  - Admin: "Panel Admin"
+ *  - Cliente: "Mi Perfil" y "Mis Citas"
+ * Incluye botón de cierre de sesión con confirmación vía SweetAlert2.
+ */
+
 import { Link, useNavigate } from "react-router-dom";
 import { useAutenticacion } from "../context/ContextoAutenticacion";
+import { HeartPulse, LogIn, UserPlus, LayoutDashboard, User, CalendarDays, LogOut } from "lucide-react";
 import Swal from "sweetalert2";
 
 function BarraNavegacion() {
   const { usuario, cerrarSesion } = useAutenticacion();
   const navegar = useNavigate();
 
+  /**
+   * Solicita confirmación al usuario antes de cerrar sesión.
+   * Si confirma, limpia la sesión y redirige al login.
+   */
   async function manejarCerrarSesion() {
     const resultado = await Swal.fire({
       icon: "question",
@@ -34,31 +48,53 @@ function BarraNavegacion() {
 
   return (
     <nav id="barraNavegacion" className="barraNavegacion">
+      {/* Logo de la aplicación con icono profesional */}
       <div className="barraNavegacion__logo">
-        <Link to="/">🏥 IncreaseClinic</Link>
+        <Link to="/">
+          <HeartPulse size={22} strokeWidth={2.5} />
+          <span>IncreaseClinic</span>
+        </Link>
       </div>
 
+      {/* Enlaces de navegación */}
       <div className="barraNavegacion__enlaces">
+        {/* Enlaces para usuario NO autenticado */}
         {!usuario && (
           <>
-            <Link to="/login" className="barraNavegacion__enlace">Iniciar Sesión</Link>
-            <Link to="/registro" className="barraNavegacion__enlace barraNavegacion__enlace--resaltado">Registrarse</Link>
+            <Link to="/login" className="barraNavegacion__enlace">
+              <LogIn size={16} />
+              <span>Iniciar Sesión</span>
+            </Link>
+            <Link to="/registro" className="barraNavegacion__enlace barraNavegacion__enlace--resaltado">
+              <UserPlus size={16} />
+              <span>Registrarse</span>
+            </Link>
           </>
         )}
 
+        {/* Enlaces exclusivos para administradores */}
         {usuario && usuario.rol === "admin" && (
-          <>
-            <Link to="/admin" className="barraNavegacion__enlace">Panel Admin</Link>
-          </>
+          <Link to="/admin" className="barraNavegacion__enlace">
+            <LayoutDashboard size={16} />
+            <span>Panel Admin</span>
+          </Link>
         )}
 
+        {/* Enlaces exclusivos para clientes */}
         {usuario && usuario.rol === "cliente" && (
           <>
-            <Link to="/perfil" className="barraNavegacion__enlace">Mi Perfil</Link>
-            <Link to="/citas" className="barraNavegacion__enlace">Mis Citas</Link>
+            <Link to="/perfil" className="barraNavegacion__enlace">
+              <User size={16} />
+              <span>Mi Perfil</span>
+            </Link>
+            <Link to="/citas" className="barraNavegacion__enlace">
+              <CalendarDays size={16} />
+              <span>Mis Citas</span>
+            </Link>
           </>
         )}
 
+        {/* Sección de usuario autenticado: saludo + cerrar sesión */}
         {usuario && (
           <div className="barraNavegacion__usuario">
             <span className="barraNavegacion__nombreUsuario">
@@ -69,7 +105,8 @@ function BarraNavegacion() {
               className="barraNavegacion__botonSalir"
               onClick={manejarCerrarSesion}
             >
-              Cerrar Sesión
+              <LogOut size={14} />
+              <span>Cerrar Sesión</span>
             </button>
           </div>
         )}

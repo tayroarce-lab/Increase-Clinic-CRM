@@ -1,5 +1,15 @@
+/**
+ * ServicioUsuarios.jsx - Servicio para operaciones de usuarios y autenticación.
+ * Maneja el inicio de sesión, registro y obtención de usuarios
+ * contra el endpoint /usuarios del json-server.
+ */
+
 import { URL_BASE, manejarRespuesta } from "./api";
 
+/**
+ * Obtiene la lista completa de usuarios registrados.
+ * @returns {Promise<Array>} Lista de objetos usuario.
+ */
 async function obtenerUsuarios() {
   try {
     const respuesta = await fetch(`${URL_BASE}/usuarios`);
@@ -10,42 +20,72 @@ async function obtenerUsuarios() {
   }
 }
 
-async function iniciarSesion(nombreUsuario, contrasena) {
+/**
+ * Autentica a un usuario buscando por correo y contraseña.
+ * @param {string} correo - El correo electrónico del usuario.
+ * @param {string} contrasena - La contraseña del usuario.
+ * @returns {Promise<Object>} Los datos del usuario autenticado.
+ * @throws {Error} Si las credenciales no coinciden con ningún usuario.
+ */
+async function iniciarSesion(correo, contrasena) {
   try {
+    const correoCodificado = encodeURIComponent(correo);
+    const contrasenaCodificada = encodeURIComponent(contrasena);
     const respuesta = await fetch(
-      `${URL_BASE}/usuarios?nombreUsuario=${nombreUsuario}&contrasena=${contrasena}`
+      `${URL_BASE}/usuarios?correo=${correoCodificado}&contrasena=${contrasenaCodificada}`
     );
-    const usuarios = await manejarRespuesta(respuesta);
+    const usuariosEncontrados = await manejarRespuesta(respuesta);
 
-    if (usuarios.length === 0) {
+    // Si no se encontró ningún usuario con esas credenciales
+    if (usuariosEncontrados.length === 0) {
       throw new Error("Credenciales incorrectas");
     }
 
-    return usuarios[0];
+    // Retornamos el primer (y único) resultado
+    return usuariosEncontrados[0];
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
     throw error;
   }
 }
 
+/**
+ * Registra un nuevo usuario en el sistema.
+ * Antes de crear, verifica que no exista un usuario con el mismo nombre o correo.
+ * @param {Object} datosUsuario - Datos del nuevo usuario (nombreUsuario, contrasena, nombreCompleto, correo).
+ * @returns {Promise<Object>} El usuario creado con su ID asignado.
+ * @throws {Error} Si el nombre de usuario o correo ya existen.
+ */
 async function registrarUsuario(datosUsuario) {
   try {
-    const usuariosExistentes = await fetch(
-      `${URL_BASE}/usuarios?nombreUsuario=${datosUsuario.nombreUsuario}`
+    // Verificar si el nombre de usuario ya está en uso
+    const nombreUsuarioCodificado = encodeURIComponent(datosUsuario.nombreUsuario);
+    const respuestaNombreUsuario = await fetch(
+      `${URL_BASE}/usuarios?nombreUsuario=${nombreUsuarioCodificado}`
     );
-    const existentes = await manejarRespuesta(usuariosExistentes);
+    const usuariosConMismoNombre = await manejarRespuesta(respuestaNombreUsuario);
 
-    if (existentes.length > 0) {
+    if (usuariosConMismoNombre.length > 0) {
       throw new Error("El nombre de usuario ya existe");
     }
 
-    const respuesta = await fetch(`${URL_BASE}/usuarios`, {
+    // Verificar si el correo electrónico ya está registrado
+    const correoCodificado = encodeURIComponent(datosUsuario.correo);
+    const respuestaCorreo = await fetch(`${URL_BASE}/usuarios?correo=${correoCodificado}`);
+    const usuariosConMismoCorreo = await manejarRespuesta(respuestaCorreo);
+
+    if (usuariosConMismoCorreo.length > 0) {
+      throw new Error("Este correo electrónico ya está registrado");
+    }
+
+    // Si no hay duplicados, crear el nuevo usuario con rol "cliente" por defecto
+    const respuestaCreacion = await fetch(`${URL_BASE}/usuarios`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...datosUsuario, rol: "cliente" }),
     });
 
-    return await manejarRespuesta(respuesta);
+    return await manejarRespuesta(respuestaCreacion);
   } catch (error) {
     console.error("Error al registrar usuario:", error);
     throw error;
