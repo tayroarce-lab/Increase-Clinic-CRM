@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import { useAutenticacion } from "../../context/ContextoAutenticacion";
-import { obtenerCitasPorUsuario, crearCita, eliminarCita } from "../../services/ServicioCitas";
-import { obtenerPacientes, crearPaciente } from "../../services/ServicioPacientes";
+import ServicioCitas from "../../services/ServicioCitas";
+import ServicioPacientes from "../../services/ServicioPacientes";
 import IndicadorCarga from "../common/IndicadorCarga";
 import { CalendarPlus, X, CalendarDays, Clock, FileText, AlertCircle, ClipboardList, XCircle } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/userStyles/Citas.css";
 
-/**
- * Citas - Componente para que el cliente visualice, solicite y cancele sus citas.
- * Se comunica con la API para obtener las citas filtradas por el ID del usuario actual.
- */
+// Aquí los clientes piden, miran o borran sus citas.
 function Citas() {
-  // --- Estados del componente ---
+  // Aquí guardamos los datos de tus citas.
   const { usuario } = useAutenticacion();
   const [listaCitas, setListaCitas] = useState([]);
   const [estaCargando, setEstaCargando] = useState(true);
@@ -20,32 +17,30 @@ function Citas() {
   const [mostrarFormularioNuevaCita, setMostrarFormularioNuevaCita] = useState(false);
   const [errorValidacionCita, setErrorValidacionCita] = useState("");
 
-  /** Datos del formulario de nueva cita */
+  // Aquí anotamos el día y la hora de tu cita.
   const [datosNuevaCita, setDatosNuevaCita] = useState({
     fechaCita: "",
     horaCita: "",
     motivoConsulta: "",
   });
 
-  // --- Efecto: cargar citas al montar o cuando cambia el usuario ---
+  // Al abrir la página, buscamos tus citas.
   useEffect(() => {
     if (usuario?.id) {
       cargarHistorialCitas();
     }
   }, [usuario?.id]);
 
-  // --- Funciones principales ---
+  // Estas cajitas de código sirven para mover los datos de tus citas.
 
-  /**
-   * Obtiene la lista de citas del servidor filtradas por el ID del usuario actual.
-   */
+// Trae todas tus citas del internet.
   async function cargarHistorialCitas() {
     try {
       setEstaCargando(true);
       setMensajeError("");
       const idUsuarioStr = String(usuario.id);
-      const citasRecibidas = await obtenerCitasPorUsuario(idUsuarioStr);
-      setListaCitas(citasRecibidas);
+      const citasRecibidas = await ServicioCitas.getCitas();
+      setListaCitas(citasRecibidas.filter(cita => String(cita.idUsuario) === idUsuarioStr));
     } catch (errorPeticion) {
       setMensajeError(`Hubo un error al cargar las citas: ${errorPeticion.message}`);
     } finally {
@@ -53,10 +48,7 @@ function Citas() {
     }
   }
 
-  /**
-   * Valida que todos los campos del formulario de nueva cita estén llenos.
-   * @returns {boolean} true si el formulario es válido.
-   */
+// Revisa que hayas puesto el día, la hora y el motivo.
   function validarCamposCita() {
     if (!datosNuevaCita.fechaCita) {
       setErrorValidacionCita("Seleccionar una fecha es obligatorio");
@@ -73,22 +65,16 @@ function Citas() {
     return true;
   }
 
-  /**
-   * Actualiza el estado local con los valores que el usuario escribe en los campos.
-   * @param {Event} eventoAsociado - Evento de cambio del input.
-   */
+// Anota lo que vas escribiendo en los cuadros.
   function manejarCambioCampo(eventoAsociado) {
     const { name, value } = eventoAsociado.target;
     setDatosNuevaCita((estadoAnterior) => ({ ...estadoAnterior, [name]: value }));
   }
 
-  /**
-   * Verifica si el usuario actual ya existe en la colección de "pacientes".
-   * Si no existe, lo registra automáticamente basándose en sus datos de usuario.
-   */
+// Si eres nuevo, te anota en la lista de pacientes.
   async function validarYRegistrarComoPaciente() {
     try {
-      const todosLosPacientes = await obtenerPacientes();
+      const todosLosPacientes = await ServicioPacientes.getPacientes();
       const pacienteExistente = todosLosPacientes.find(
         (pacienteActual) => pacienteActual.correo === usuario.correo
       );
@@ -102,16 +88,14 @@ function Citas() {
           diagnostico: "Paciente registrado automáticamente al solicitar cita",
           fechaRegistro: new Date().toISOString().split("T")[0],
         };
-        await crearPaciente(nuevoPerfilPaciente);
+        await ServicioPacientes.postPacientes(nuevoPerfilPaciente);
       }
     } catch (errorValidacion) {
       console.error("No se pudo registrar como paciente:", errorValidacion);
     }
   }
 
-  /**
-   * Procesa la solicitud de una nueva cita.
-   */
+// Envía tu pedido de cita al internet.
   async function enviarSolicitudCita() {
     setErrorValidacionCita("");
 
@@ -128,7 +112,7 @@ function Citas() {
 
     try {
       await validarYRegistrarComoPaciente();
-      await crearCita(informacionCitaNueva);
+      await ServicioCitas.postCitas(informacionCitaNueva);
 
       setDatosNuevaCita({ fechaCita: "", horaCita: "", motivoConsulta: "" });
       setMostrarFormularioNuevaCita(false);
@@ -152,10 +136,7 @@ function Citas() {
     }
   }
 
-  /**
-   * Cancela y elimina una cita tras pedir confirmación al usuario.
-   * @param {Object} citaSeleccionada - La cita que se desea cancelar.
-   */
+// Borra tu cita si ya no quieres ir.
   async function confirmarEliminacionCita(citaSeleccionada) {
     const alertaConfirmacion = await Swal.fire({
       icon: "warning",
@@ -171,7 +152,7 @@ function Citas() {
     if (!alertaConfirmacion.isConfirmed) return;
 
     try {
-      await eliminarCita(citaSeleccionada.id);
+      await ServicioCitas.deleteCitas(citaSeleccionada.id);
       await cargarHistorialCitas();
 
       Swal.fire({
@@ -191,11 +172,7 @@ function Citas() {
     }
   }
 
-  /**
-   * Retorna la clase CSS que pinta el badge según el estado de la cita.
-   * @param {string} estadoCita - "pendiente", "confirmada" o "cancelada".
-   * @returns {string} La clase CSS correspondiente.
-   */
+// Elige el color del aviso según cómo esté tu cita.
   function resolverEstiloEstadoColor(estadoCita) {
     const mapaEstilosEstado = {
       pendiente: "estadoCitaPendiente",
@@ -205,21 +182,21 @@ function Citas() {
     return mapaEstilosEstado[estadoCita] || "";
   }
 
-  // --- Renderizado condicional: estado de carga ---
+// Si todavía está cargando, mostramos un aviso.
   if (estaCargando) {
     return <IndicadorCarga mensaje="Cargando tu historial de citas..." />;
   }
 
-  // --- Renderizado principal ---
+// Aquí dibujamos todo lo que se ve en la pantalla.
   return (
     <div id="seccionCitasCliente" className="citasCliente">
-      {/* Encabezado de la sección */}
+      {/* El título de arriba. */}
       <div className="citasClienteEncabezado">
         <h1 className="citasClienteTitulo">Mis Citas</h1>
         <p className="citasClienteSubtitulo">Administra tu agenda de salud con IncreaseClinic</p>
       </div>
 
-      {/* Mensaje de error global */}
+      {/* Un aviso si algo sale mal. */}
       {mensajeError && (
         <div className="mensajeError">
           <AlertCircle size={16} />
@@ -227,7 +204,7 @@ function Citas() {
         </div>
       )}
 
-      {/* Botón para mostrar/ocultar el formulario de nueva cita */}
+      {/* Botón para abrir o cerrar la ventana de citas. */}
       <div className="citasClienteAcciones">
         <button
           id="botonAgendarCita"
@@ -248,7 +225,7 @@ function Citas() {
         </button>
       </div>
 
-      {/* Formulario de solicitud de nueva cita */}
+      {/* La ventanita para pedir tu cita. */}
       {mostrarFormularioNuevaCita && (
         <div className="citasClienteFormularioContenedor">
           <h2 className="citasClienteFormularioTitulo">Datos de Nueva Cita</h2>
@@ -261,7 +238,7 @@ function Citas() {
           )}
 
           <div id="cuerpoFormularioCita" className="formulario">
-            {/* Fila: Fecha + Hora */}
+            {/* Para elegir el día y el momento. */}
             <div className="formularioFila">
               <div className="formularioGrupo">
                 <label htmlFor="inputFechaCita" className="formularioEtiqueta">
@@ -294,7 +271,7 @@ function Citas() {
               </div>
             </div>
 
-            {/* Campo: Motivo de la visita */}
+            {/* Para contar por qué vienes al médico. */}
             <div className="formularioGrupo">
               <label htmlFor="inputAreaMotivo" className="formularioEtiqueta">
                 <FileText size={14} />
@@ -311,7 +288,7 @@ function Citas() {
               />
             </div>
 
-            {/* Botón de confirmación */}
+            {/* Botón para pedir la cita. */}
             <button
               id="botonConfirmarCita"
               type="button"
@@ -325,7 +302,7 @@ function Citas() {
         </div>
       )}
 
-      {/* Historial de citas del usuario */}
+      {/* La lista de todas tus citas de antes. */}
       <div className="citasClienteLista">
         {listaCitas.length === 0 ? (
           <div className="citasClienteVacio">
@@ -336,7 +313,7 @@ function Citas() {
         ) : (
           listaCitas.map((registroCita) => (
             <div key={registroCita.id} className="citasClienteTarjeta">
-              {/* Encabezado: Estado + Fecha/Hora */}
+              {/* Muestra si está aceptada y cuándo es. */}
               <div className="citasClienteTarjetaEncabezado">
                 <span className={`estadoCita ${resolverEstiloEstadoColor(registroCita.estado)}`}>
                   {registroCita.estado.charAt(0).toUpperCase() + registroCita.estado.slice(1)}
@@ -348,13 +325,13 @@ function Citas() {
                   {registroCita.hora}
                 </span>
               </div>
-              {/* Cuerpo: Motivo */}
+              {/* Muestra por qué vas al médico. */}
               <div className="citasClienteTarjetaCuerpo">
                 <p className="citasClienteTarjetaMotivo">
                   <strong>Detalle de visita:</strong> {registroCita.motivo}
                 </p>
               </div>
-              {/* Acciones: botón para revocar la cita */}
+              {/* Botón para borrar esta cita. */}
               <div className="citasClienteTarjetaAcciones">
                 <button
                   id={`botonCancelar-${registroCita.id}`}

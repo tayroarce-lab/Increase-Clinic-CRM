@@ -1,78 +1,57 @@
-/**
- * ServicioPacientes.jsx - Servicio para operaciones CRUD de pacientes.
- * Todas las funciones se comunican con el endpoint /pacientes del json-server.
- */
-
-import { URL_BASE, manejarRespuesta } from "./api";
-
-/**
- * Obtiene la lista completa de pacientes registrados en el sistema.
- * @returns {Promise<Array>} Lista de objetos paciente.
- */
-async function obtenerPacientes() {
-  try {
-    const respuesta = await fetch(`${URL_BASE}/pacientes`);
-    return await manejarRespuesta(respuesta);
-  } catch (error) {
-    console.error("Error al obtener pacientes:", error);
-    throw error;
-  }
+//PATCH
+async function patchPacientes(paciente,id){
+    try {
+        const respuesta = await fetch("http://localhost:3001/pacientes/"+id,{
+            method:"PATCH",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(paciente)
+        })
+        const datosPacientes= await respuesta.json();
+        return datosPacientes;
+    } catch (error) {
+        console.error("Error al actualizar los cambios", error);
+    }
 }
 
-/**
- * Crea un nuevo paciente en el servidor.
- * @param {Object} datosPaciente - Datos del paciente (nombre, edad, telefono, correo, diagnostico).
- * @returns {Promise<Object>} El paciente creado con su ID asignado.
- */
-async function crearPaciente(datosPaciente) {
-  try {
-    const respuesta = await fetch(`${URL_BASE}/pacientes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(datosPaciente),
-    });
-    return await manejarRespuesta(respuesta);
-  } catch (error) {
-    console.error("Error al crear paciente:", error);
-    throw error;
-  }
+//DELETE    
+async function deletePacientes(id){
+    try {
+        const respuesta = await fetch("http://localhost:3001/pacientes/"+id,{
+            method:"DELETE",
+        })
+        const datosPacientes= await respuesta.json();
+        return datosPacientes;
+    } catch (error) {
+        console.error("Error al Eliminar el registro", error);
+    }
 }
 
-/**
- * Actualiza los datos de un paciente existente.
- * @param {string} idPaciente - El ID del paciente a actualizar.
- * @param {Object} datosPaciente - Los nuevos datos del paciente.
- * @returns {Promise<Object>} El paciente actualizado.
- */
-async function actualizarPaciente(idPaciente, datosPaciente) {
-  try {
-    const respuesta = await fetch(`${URL_BASE}/pacientes/${idPaciente}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(datosPaciente),
-    });
-    return await manejarRespuesta(respuesta);
-  } catch (error) {
-    console.error("Error al actualizar paciente:", error);
-    throw error;
-  }
+async function getPacientes() {
+    try {
+        const respuesta = await fetch("http://localhost:3001/pacientes")
+        const datos = await respuesta.json();
+        return datos;
+    } catch (error) {
+        console.error("Error al obtener los pacientes", error);
+    }
 }
 
-/**
- * Elimina un paciente del servidor por su ID.
- * @param {string} idPaciente - El ID del paciente a eliminar.
- * @returns {Promise<Object>} Respuesta del servidor.
- */
-async function eliminarPaciente(idPaciente) {
-  try {
-    const respuesta = await fetch(`${URL_BASE}/pacientes/${idPaciente}`, {
-      method: "DELETE",
-    });
-    return await manejarRespuesta(respuesta);
-  } catch (error) {
-    console.error("Error al eliminar paciente:", error);
-    throw error;
-  }
+async function postPacientes(paciente) {
+    try {
+        const respuesta = await fetch("http://localhost:3001/pacientes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(paciente)
+        })
+        const datos = await respuesta.json();
+        return datos;
+    } catch (error) {
+        console.error("Error al registrar el paciente", error);
+    }
 }
 
-export { obtenerPacientes, crearPaciente, actualizarPaciente, eliminarPaciente };
+export default { patchPacientes, deletePacientes, getPacientes, postPacientes }

@@ -1,11 +1,7 @@
 import HeroInicio from "./HeroInicio";
 import ServiciosInicio from "./ServiciosInicio";
 
-/**
- * Inicio - Componente contenedor de la página de inicio (Landing Page).
- * No contiene HTML directo; únicamente compone los sub-componentes
- * HeroInicio y ServiciosInicio para mantener la separación de responsabilidades.
- */
+// Esta es la página principal con todo lo de bienvenida.
 function Inicio() {
   return (
     <div id="paginaInicio" className="paginaInicio">

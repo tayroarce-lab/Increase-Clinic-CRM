@@ -1,16 +1,9 @@
 import { CalendarCheck, Users, Stethoscope } from "lucide-react";
-import "../../../styles/userStyles/ServiciosInicio.css";
+import "../../styles/userStyles/ServiciosInicio.css";
 
-/**
- * ServiciosInicio - Sección que muestra los servicios destacados de la clínica.
- * Cada tarjeta (card) describe un servicio ofrecido con un icono de lucide-react y breve descripción.
- */
+// Aquí mostramos lo que hace la clínica por ti.
 function ServiciosInicio() {
-  /**
-   * Lista de servicios que se muestran en la landing page.
-   * Se define como arreglo para facilitar agregar/quitar servicios a futuro.
-   * Cada servicio incluye un componente de icono de lucide-react.
-   */
+  // Esta es la lista de cosas que ofrecemos.
   const listaServicios = [
     {
       id: "servicioCitas",
@@ -36,7 +29,7 @@ function ServiciosInicio() {
     <section className="servicios">
       <h2 className="serviciosTitulo">Nuestros Servicios</h2>
       <div className="serviciosGrid">
-        {/* Renderizamos cada servicio dinámicamente desde el arreglo */}
+        {/* Dibujamos cada cosa que ofrecemos de la lista. */}
         {listaServicios.map((servicio) => (
           <div key={servicio.id} className="servicioCard">
             <span className="servicioCardIcono">{servicio.icono}</span>

@@ -1,9 +1,4 @@
-/**
- * Login.jsx - Componente de inicio de sesión.
- * Presenta un formulario con campos de correo y contraseña.
- * Valida los datos antes de enviarlos y redirige al panel
- * correspondiente según el rol del usuario (admin → /admin, cliente → /citas).
- */
+// Formulario para entrar a tu cuenta.
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,7 +8,7 @@ import Swal from "sweetalert2";
 import "../../styles/userStyles/Login.css";
 
 function Login() {
-  // --- Estados del formulario ---
+  // Aquí guardamos los datos para entrar.
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [mensajeError, setMensajeError] = useState("");
@@ -22,10 +17,7 @@ function Login() {
   const { login } = useAutenticacion();
   const navegar = useNavigate();
 
-  /**
-   * Valida que los campos del formulario estén completos y sean correctos.
-   * @returns {boolean} true si la validación pasa.
-   */
+// Revisa que el correo y la clave estén bien escritos.
   function validarFormulario() {
     if (!correo.trim()) {
       setMensajeError("El correo es obligatorio");
@@ -42,10 +34,7 @@ function Login() {
     return true;
   }
 
-  /**
-   * Procesa el envío del formulario de login.
-   * Valida, autentica contra el servidor y redirige según el rol.
-   */
+// Envía tus datos para dejarte entrar.
   async function manejarEnvio() {
     setMensajeError("");
 
@@ -56,7 +45,7 @@ function Login() {
     try {
       const datosUsuario = await login(correo, contrasena);
 
-      // Notificar éxito antes de redirigir
+      // Te avisa si entraste bien.
       await Swal.fire({
         icon: "success",
         title: "¡Bienvenido!",
@@ -65,7 +54,7 @@ function Login() {
         showConfirmButton: false,
       });
 
-      // Redirigir según el rol del usuario
+      // Te lleva a tu lugar según seas jefe o cliente.
       if (datosUsuario.rol === "admin") {
         navegar("/admin");
       } else {
@@ -87,7 +76,7 @@ function Login() {
   return (
     <div id="paginaLogin" className="paginaAutenticacion">
       <div className="paginaAutenticacionTarjeta">
-        {/* Encabezado del formulario con icono */}
+        {/* El título y el dibujito de arriba. */}
         <div className="paginaAutenticacionEncabezado">
           <div className="paginaAutenticacionIconoTitulo">
             <HeartPulse size={32} strokeWidth={2} />
@@ -96,7 +85,7 @@ function Login() {
           <p className="paginaAutenticacionSubtitulo">Iniciar Sesión</p>
         </div>
 
-        {/* Mensaje de error */}
+        {/* Un aviso si escribiste algo mal. */}
         {mensajeError && (
           <div id="mensajeError" className="mensajeError">
             <AlertCircle size={16} />
@@ -104,7 +93,7 @@ function Login() {
           </div>
         )}
 
-        {/* Campo: Correo electrónico */}
+        {/* Para poner tu email. */}
         <div className="formularioGrupo">
           <label htmlFor="campoCorreo" className="formularioEtiqueta">
             <Mail size={14} />
@@ -121,7 +110,7 @@ function Login() {
           />
         </div>
 
-        {/* Campo: Contraseña */}
+        {/* Para poner tu clave secreta. */}
         <div className="formularioGrupo">
           <label htmlFor="campoContrasena" className="formularioEtiqueta">
             <Lock size={14} />
@@ -138,7 +127,7 @@ function Login() {
           />
         </div>
 
-        {/* Botón de envío */}
+        {/* Botón para entrar. */}
         <button
           id="botonLogin"
           type="button"
@@ -159,7 +148,7 @@ function Login() {
           )}
         </button>
 
-        {/* Enlace al registro */}
+        {/* Por si no tienes cuenta todavía. */}
         <p className="paginaAutenticacionEnlace">
           ¿No tienes cuenta?{" "}
           <Link to="/registro">Regístrate aquí</Link>

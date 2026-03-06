@@ -1,20 +1,16 @@
 import { Link } from "react-router-dom";
-import { useAutenticacion } from "../../../context/ContextoAutenticacion";
+import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import { HeartPulse, LogIn, UserPlus, ArrowRight } from "lucide-react";
-import "../../../styles/userStyles/HeroInicio.css";
+import "../../styles/userStyles/HeroInicio.css";
 
-/**
- * HeroInicio - Sección hero (encabezado visual) de la página de inicio.
- * Muestra un título de bienvenida, descripción y botones de acción
- * que cambian según el estado de autenticación del usuario.
- */
+// La parte de arriba de la página de inicio.
 function HeroInicio() {
   const { usuario } = useAutenticacion();
 
   return (
     <header className="hero">
       <div className="heroContenido">
-        {/* Icono decorativo del hero */}
+        {/* El dibujito de arriba. */}
         <div className="heroIconoPrincipal">
           <HeartPulse size={56} strokeWidth={1.8} />
         </div>
@@ -25,7 +21,7 @@ function HeroInicio() {
           Tecnología de vanguardia para el cuidado de tu salud.
         </p>
         <div className="heroAcciones">
-          {/* Si el usuario NO ha iniciado sesión, mostramos Login y Registro */}
+          {/* Si no has entrado, mostramos botones para entrar o anotarte. */}
           {!usuario ? (
             <>
               <Link to="/login" className="boton botonPrimario">
@@ -38,7 +34,7 @@ function HeroInicio() {
               </Link>
             </>
           ) : (
-            /* Si ya inició sesión, mostramos enlace a su panel correspondiente */
+            /* Si ya entraste, te llevamos a tu panel. */
             <Link
               to={usuario.rol === "admin" ? "/admin" : "/citas"}
               className="boton botonPrimario"

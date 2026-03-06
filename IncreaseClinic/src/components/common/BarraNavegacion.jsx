@@ -1,11 +1,4 @@
-/**
- * BarraNavegacion.jsx - Barra de navegación principal de la aplicación.
- * Muestra enlaces contextuales según el estado de autenticación y el rol del usuario:
- *  - Sin sesión: "Iniciar Sesión" y "Registrarse"
- *  - Admin: "Panel Admin"
- *  - Cliente: "Mi Perfil" y "Mis Citas"
- * Incluye botón de cierre de sesión con confirmación vía SweetAlert2.
- */
+// La barrita de arriba para moverte por la página.
 
 import { Link, useNavigate } from "react-router-dom";
 import { useAutenticacion } from "../../context/ContextoAutenticacion";
@@ -17,10 +10,7 @@ function BarraNavegacion() {
   const { usuario, cerrarSesion } = useAutenticacion();
   const navegar = useNavigate();
 
-  /**
-   * Solicita confirmación al usuario antes de cerrar sesión.
-   * Si confirma, limpia la sesión y redirige al login.
-   */
+  // Te saca de tu cuenta cuando presionas el botón.
   async function manejarCerrarSesion() {
     const resultado = await Swal.fire({
       icon: "question",
@@ -49,7 +39,7 @@ function BarraNavegacion() {
 
   return (
     <nav id="barraNavegacion" className="barraNavegacion">
-      {/* Logo de la aplicación con icono profesional */}
+      {/* El nombre y el dibujito de la clínica. */}
       <div className="barraNavegacionLogo">
         <Link to="/">
           <HeartPulse size={22} strokeWidth={2.5} />
@@ -57,9 +47,9 @@ function BarraNavegacion() {
         </Link>
       </div>
 
-      {/* Enlaces de navegación */}
+      {/* Botones para ir a otros lados. */}
       <div className="barraNavegacionEnlaces">
-        {/* Enlaces para usuario NO autenticado */}
+        {/* Botones para los que no han entrado. */}
         {!usuario && (
           <>
             <Link to="/login" className="barraNavegacionEnlace">
@@ -73,7 +63,7 @@ function BarraNavegacion() {
           </>
         )}
 
-        {/* Enlaces exclusivos para administradores */}
+        {/* Botones solo para el jefe. */}
         {usuario && usuario.rol === "admin" && (
           <Link to="/admin" className="barraNavegacionEnlace">
             <LayoutDashboard size={16} />
@@ -81,7 +71,7 @@ function BarraNavegacion() {
           </Link>
         )}
 
-        {/* Enlaces exclusivos para clientes */}
+        {/* Botones solo para los clientes. */}
         {usuario && usuario.rol === "cliente" && (
           <>
             <Link to="/perfil" className="barraNavegacionEnlace">
@@ -95,7 +85,7 @@ function BarraNavegacion() {
           </>
         )}
 
-        {/* Sección de usuario autenticado: saludo + cerrar sesión */}
+        {/* Muestra tu nombre y el botón de salir. */}
         {usuario && (
           <div className="barraNavegacionUsuario">
             <span className="barraNavegacionNombreUsuario">

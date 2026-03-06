@@ -1,9 +1,4 @@
-/**
- * Registro.jsx - Componente de registro de nuevos usuarios.
- * Presenta un formulario con validación de campos obligatorios,
- * longitud mínima de contraseña y confirmación de contraseña.
- * Al completar el registro, inicia sesión automáticamente y redirige a /citas.
- */
+// Formulario para crear una cuenta nueva.
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,7 +8,7 @@ import Swal from "sweetalert2";
 import "../../styles/userStyles/Registro.css";
 
 function Registro() {
-  // --- Estados del formulario ---
+  // Aquí guardamos tus datos para registrarte.
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [confirmarContrasena, setConfirmarContrasena] = useState("");
@@ -25,10 +20,7 @@ function Registro() {
   const { registro } = useAutenticacion();
   const navegar = useNavigate();
 
-  /**
-   * Valida todos los campos del formulario de registro.
-   * @returns {boolean} true si la validación pasa.
-   */
+// Revisa que hayas escrito todo bien para crear tu cuenta.
   function validarFormulario() {
     if (!nombreUsuario.trim()) {
       setMensajeError("El nombre de usuario es obligatorio");
@@ -65,9 +57,7 @@ function Registro() {
     return true;
   }
 
-  /**
-   * Procesa el envío del formulario de registro.
-   */
+// Envía tus datos al internet para crear tu cuenta.
   async function manejarEnvio() {
     setMensajeError("");
 
@@ -109,7 +99,7 @@ function Registro() {
   return (
     <div id="paginaRegistro" className="paginaAutenticacion">
       <div className="paginaAutenticacionTarjeta">
-        {/* Encabezado con icono */}
+        {/* El título y el dibujito de arriba. */}
         <div className="paginaAutenticacionEncabezado">
           <div className="paginaAutenticacionIconoTitulo">
             <HeartPulse size={32} strokeWidth={2} />
@@ -118,7 +108,7 @@ function Registro() {
           <p className="paginaAutenticacionSubtitulo">Crear Cuenta</p>
         </div>
 
-        {/* Mensaje de error */}
+        {/* Un aviso si algo faltó o está mal. */}
         {mensajeError && (
           <div id="mensajeErrorRegistro" className="mensajeError">
             <AlertCircle size={16} />
@@ -126,7 +116,7 @@ function Registro() {
           </div>
         )}
 
-        {/* Campo: Nombre de usuario */}
+        {/* Para poner tu nombre de usuario. */}
         <div className="formularioGrupo">
           <label htmlFor="campoNombreUsuario" className="formularioEtiqueta">
             <UserCircle size={14} />
@@ -143,7 +133,7 @@ function Registro() {
           />
         </div>
 
-        {/* Campo: Nombre completo */}
+        {/* Para poner tu nombre real. */}
         <div className="formularioGrupo">
           <label htmlFor="campoNombreCompleto" className="formularioEtiqueta">
             <User size={14} />
@@ -160,7 +150,7 @@ function Registro() {
           />
         </div>
 
-        {/* Campo: Correo electrónico */}
+        {/* Para poner tu email. */}
         <div className="formularioGrupo">
           <label htmlFor="campoCorreoRegistro" className="formularioEtiqueta">
             <Mail size={14} />
@@ -177,7 +167,7 @@ function Registro() {
           />
         </div>
 
-        {/* Campo: Contraseña */}
+        {/* Para poner tu clave secreta. */}
         <div className="formularioGrupo">
           <label htmlFor="campoContrasenaRegistro" className="formularioEtiqueta">
             <Lock size={14} />
@@ -194,7 +184,7 @@ function Registro() {
           />
         </div>
 
-        {/* Campo: Confirmar contraseña */}
+        {/* Vuelve a poner tu clave para estar seguros. */}
         <div className="formularioGrupo">
           <label htmlFor="campoConfirmarContrasena" className="formularioEtiqueta">
             <ShieldCheck size={14} />
@@ -211,7 +201,7 @@ function Registro() {
           />
         </div>
 
-        {/* Botón de envío */}
+        {/* Botón para crear tu cuenta. */}
         <button
           id="botonRegistro"
           type="button"
@@ -232,7 +222,7 @@ function Registro() {
           )}
         </button>
 
-        {/* Enlace al login */}
+        {/* Por si ya tienes una cuenta. */}
         <p className="paginaAutenticacionEnlace">
           ¿Ya tienes cuenta?{" "}
           <Link to="/login">Inicia sesión aquí</Link>

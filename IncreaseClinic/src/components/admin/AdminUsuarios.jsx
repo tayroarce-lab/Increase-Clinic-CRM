@@ -1,11 +1,7 @@
-/**
- * AdminUsuarios.jsx - Componente para la gestión de usuarios (Administradores y Clientes).
- * Permite listar todos los usuarios, crear nuevos administradores y eliminar cuentas.
- * Protege al administrador principal de ser eliminado.
- */
+// Aquí el jefe puede crear otros jefes o borrar usuarios.
 import { useState, useEffect } from "react";
-import { obtenerUsuarios, crearUsuarioAdmin, eliminarUsuario } from "../../services/ServicioUsuarios";
-import { Users, UserPlus, Shield, Trash2, Mail, Lock, UserCircle, AlertCircle, Save, X, Search } from "lucide-react";
+import ServicioUsuarios from "../../services/ServicioUsuarios";
+import { Users, UserPlus, Shield, Trash2, Mail, Lock, UserCircle, AlertCircle, Save, X, Search, Pencil } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/AdminUsuarios.css";
 
@@ -15,26 +11,28 @@ function AdminUsuarios() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [errorFormulario, setErrorFormulario] = useState("");
   const [busqueda, setBusqueda] = useState("");
+  const [usuarioEditando, setUsuarioEditando] = useState(null);
 
   const CORREO_ADMIN_PRINCIPAL = "admin@increaseclinic.com";
 
-  /** Estado del formulario de nuevo admin */
-  const [nuevoAdmin, setNuevoAdmin] = useState({
+  // Aquí anotamos los datos del usuario.
+  const [formulario, setFormulario] = useState({
     nombreUsuario: "",
     contrasena: "",
     nombreCompleto: "",
     correo: "",
+    rol: "admin"
   });
 
   useEffect(() => {
     cargarUsuarios();
   }, []);
 
-  /** Carga la lista completa de usuarios desde el servidor */
+  // Trae a todos los usuarios del internet.
   async function cargarUsuarios() {
     try {
       setEstaCargando(true);
-      const datos = await obtenerUsuarios();
+      const datos = await ServicioUsuarios.getUser();
       setUsuarios(datos);
     } catch (error) {
       Swal.fire("Error", "No se pudieron cargar los usuarios", "error");
@@ -43,42 +41,84 @@ function AdminUsuarios() {
     }
   }
 
-  /** Maneja el cambio en los campos del formulario */
+  // Anota lo que escribimos en los cuadros.
   function manejarCambio(e) {
     const { name, value } = e.target;
-    setNuevoAdmin(prev => ({ ...prev, [name]: value }));
+    setFormulario(prev => ({ ...prev, [name]: value }));
   }
 
-  /** Procesa la creación de un nuevo administrador */
-  async function manejarCrearAdmin() {
+  // Borra lo que escribimos y cierra la ventanita.
+  function limpiarFormulario() {
+    setFormulario({ nombreUsuario: "", contrasena: "", nombreCompleto: "", correo: "", rol: "admin" });
+    setUsuarioEditando(null);
+    setMostrarModal(false);
+    setErrorFormulario("");
+  }
+
+  // Abre la ventana para crear alguien nuevo.
+  function abrirFormularioCrear() {
+    limpiarFormulario();
+    setMostrarModal(true);
+  }
+
+  // Abre la ventana para cambiar datos de alguien.
+  function abrirFormularioEditar(usuarioSelec) {
+    setFormulario({
+      nombreUsuario: usuarioSelec.nombreUsuario || "",
+      contrasena: "", // Se deja vacía por si no la quiere cambiar.
+      nombreCompleto: usuarioSelec.nombreCompleto || "",
+      correo: usuarioSelec.correo || "",
+      rol: usuarioSelec.rol || "cliente"
+    });
+    setUsuarioEditando(usuarioSelec);
+    setMostrarModal(true);
+    setErrorFormulario("");
+  }
+
+  // Guarda al usuario en el internet.
+  async function manejarEnvio() {
     setErrorFormulario("");
     
-    // Validaciones básicas
-    if (!nuevoAdmin.nombreUsuario.trim() || !nuevoAdmin.contrasena.trim() || !nuevoAdmin.correo.trim()) {
-      setErrorFormulario("Todos los campos marcados son obligatorios");
+    // Revisa que no falte escribir lo importante.
+    if (!formulario.nombreUsuario.trim() || !formulario.correo.trim()) {
+      setErrorFormulario("El usuario y el correo son obligatorios.");
+      return;
+    }
+
+    if (!usuarioEditando && !formulario.contrasena.trim()) {
+      setErrorFormulario("La contraseña es obligatoria para nuevos usuarios.");
       return;
     }
 
     try {
-      await crearUsuarioAdmin(nuevoAdmin);
-      Swal.fire({
-        icon: "success",
-        title: "Admin Creado",
-        text: `El usuario ${nuevoAdmin.nombreUsuario} ahora es administrador.`,
-        timer: 2000,
-        showConfirmButton: false
-      });
-      setMostrarModal(false);
-      setNuevoAdmin({ nombreUsuario: "", contrasena: "", nombreCompleto: "", correo: "" });
+      const todos = await ServicioUsuarios.getUser();
+      
+      const nombreOcupado = todos.find(u => u.nombreUsuario === formulario.nombreUsuario && u.id !== usuarioEditando?.id);
+      if (nombreOcupado) throw new Error("Ese nombre de usuario ya está usado.");
+
+      if (usuarioEditando) {
+        let datosEnviar = { ...formulario };
+        if (!datosEnviar.contrasena) delete datosEnviar.contrasena;
+
+        await ServicioUsuarios.patchUsuarios(datosEnviar, usuarioEditando.id);
+        Swal.fire({ icon: "success", title: "Actualizado", text: "Datos guardados.", timer: 2000, showConfirmButton: false });
+      } else {
+        const correoOcupado = todos.find(u => u.correo === formulario.correo);
+        if (correoOcupado) throw new Error("Ese correo ya está registrado.");
+
+        await ServicioUsuarios.postUser({ ...formulario });
+        Swal.fire({ icon: "success", title: "Creado", text: "Usuario creado.", timer: 2000, showConfirmButton: false });
+      }
+
+      limpiarFormulario();
       await cargarUsuarios();
     } catch (error) {
       setErrorFormulario(error.message);
     }
   }
 
-  /** Elimina un usuario con confirmación, protegiendo al admin principal */
+  // Borra a un usuario si el jefe quiere, pero no al jefe principal.
   async function manejarEliminar(usuarioSeleccionado) {
-    // Protección del admin principal
     if (usuarioSeleccionado.correo === CORREO_ADMIN_PRINCIPAL) {
       Swal.fire({
         icon: "error",
@@ -103,7 +143,7 @@ function AdminUsuarios() {
     if (!resultado.isConfirmed) return;
 
     try {
-      await eliminarUsuario(usuarioSeleccionado.id);
+      await ServicioUsuarios.deleteUsuarios(usuarioSeleccionado.id);
       await cargarUsuarios();
       Swal.fire("Eliminado", "El usuario ha sido removido del sistema.", "success");
     } catch (error) {
@@ -111,7 +151,7 @@ function AdminUsuarios() {
     }
   }
 
-  // Filtrar usuarios según la búsqueda
+  // Busca usuarios por su nombre o correo.
   const usuariosFiltrados = usuarios.filter(u => 
     u.nombreUsuario.toLowerCase().includes(busqueda.toLowerCase()) ||
     u.correo.toLowerCase().includes(busqueda.toLowerCase())
@@ -122,10 +162,10 @@ function AdminUsuarios() {
       <div className="panelAdminAcciones">
         <button 
           className="formularioBoton formularioBotonPrimario"
-          onClick={() => setMostrarModal(true)}
+          onClick={abrirFormularioCrear}
         >
           <UserPlus size={18} />
-          <span>Crear Nuevo Admin</span>
+          <span>Crear Usuario</span>
         </button>
         
         <div className="panelAdminBuscador">
@@ -172,13 +212,22 @@ function AdminUsuarios() {
                   </td>
                   <td className="tablaCelda tablaCeldaAcciones">
                     {u.correo !== CORREO_ADMIN_PRINCIPAL ? (
-                      <button 
-                        className="botonAccion botonAccionEliminar"
-                        onClick={() => manejarEliminar(u)}
-                      >
-                        <Trash2 size={13} />
-                        <span>Eliminar</span>
-                      </button>
+                      <>
+                        <button 
+                          className="botonAccion botonAccionEditar"
+                          onClick={() => abrirFormularioEditar(u)}
+                        >
+                          <Pencil size={13} />
+                          <span>Editar</span>
+                        </button>
+                        <button 
+                          className="botonAccion botonAccionEliminar"
+                          onClick={() => manejarEliminar(u)}
+                        >
+                          <Trash2 size={13} />
+                          <span>Eliminar</span>
+                        </button>
+                      </>
                     ) : (
                       <span className="textoTenue"><Shield size={12} /> Protegido</span>
                     )}
@@ -190,11 +239,13 @@ function AdminUsuarios() {
         </div>
       )}
 
-      {/* Modal para Crear Admin */}
+      {/* Ventanita para anotar al nuevo jefe. */}
       {mostrarModal && (
         <div className="panelAdminModal">
           <div className="panelAdminModalContenido">
-            <h2 className="panelAdminModalTitulo">Registrar Nuevo Administrador</h2>
+            <h2 className="panelAdminModalTitulo">
+              {usuarioEditando ? "Editar Usuario" : "Registrar Nuevo Usuario"}
+            </h2>
             
             {errorFormulario && (
               <div className="mensajeError">
@@ -211,20 +262,22 @@ function AdminUsuarios() {
                   name="nombreUsuario"
                   className="formularioCampo"
                   placeholder="Ej: dr_perez"
-                  value={nuevoAdmin.nombreUsuario}
+                  value={formulario.nombreUsuario}
                   onChange={manejarCambio} 
                 />
               </div>
 
               <div className="formularioGrupo">
-                <label className="formularioEtiqueta">Correo</label>
+                <label className="formularioEtiqueta">Correo {usuarioEditando && "(No se puede cambiar)"}</label>
                 <input 
                   type="email" 
                   name="correo"
                   className="formularioCampo"
                   placeholder="admin@increaseclinic.com"
-                  value={nuevoAdmin.correo}
+                  value={formulario.correo}
                   onChange={manejarCambio} 
+                  disabled={usuarioEditando != null}
+                  style={usuarioEditando ? { backgroundColor: "#e2e8f0", cursor: "not-allowed", color: "#64748b" } : {}}
                 />
               </div>
 
@@ -234,29 +287,42 @@ function AdminUsuarios() {
                   type="text" 
                   name="nombreCompleto"
                   className="formularioCampo"
-                  placeholder="Nombre del doctor/admin"
-                  value={nuevoAdmin.nombreCompleto}
+                  placeholder="Nombre de la persona"
+                  value={formulario.nombreCompleto}
                   onChange={manejarCambio} 
                 />
               </div>
 
               <div className="formularioGrupo">
-                <label className="formularioEtiqueta">Contraseña</label>
+                <label className="formularioEtiqueta">Rol</label>
+                <select 
+                  name="rol"
+                  className="formularioCampo"
+                  value={formulario.rol}
+                  onChange={manejarCambio}
+                >
+                  <option value="cliente">Cliente</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+
+              <div className="formularioGrupo">
+                <label className="formularioEtiqueta">Contraseña {usuarioEditando && "(Déjala vacía para no cambiarla)"}</label>
                 <input 
                   type="password" 
                   name="contrasena"
                   className="formularioCampo"
                   placeholder="••••••••"
-                  value={nuevoAdmin.contrasena}
+                  value={formulario.contrasena}
                   onChange={manejarCambio} 
                 />
               </div>
 
               <div className="formularioBotonesModal">
-                <button className="formularioBoton formularioBotonPrimario" onClick={manejarCrearAdmin}>
-                  <Save size={16} /> <span>Crear Administrador</span>
+                <button className="formularioBoton formularioBotonPrimario" onClick={manejarEnvio}>
+                  <Save size={16} /> <span>Guardar</span>
                 </button>
-                <button className="formularioBoton formularioBotonSecundario" onClick={() => setMostrarModal(false)}>
+                <button className="formularioBoton formularioBotonSecundario" onClick={limpiarFormulario}>
                   <X size={16} /> <span>Cancelar</span>
                 </button>
               </div>

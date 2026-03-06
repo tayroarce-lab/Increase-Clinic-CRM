@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  obtenerPacientes,
-  crearPaciente,
-  actualizarPaciente,
-  eliminarPaciente,
-} from "../../services/ServicioPacientes";
+import ServicioPacientes from "../../services/ServicioPacientes";
 import IndicadorCarga from "../common/IndicadorCarga";
 import AdminCitas from "./AdminCitas";
 import AdminUsuarios from "./AdminUsuarios";
@@ -12,14 +7,9 @@ import { Users, CalendarDays, UserPlus, AlertCircle, Pencil, Trash2, User, Phone
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/Admin.css";
 
-/**
- * PanelAdmin - Componente principal del panel de administración.
- * Contiene dos pestañas:
- *   1. Gestión de Pacientes (CRUD completo)
- *   2. Gestión de Citas (ver todas las citas solicitadas y cambiar su estado)
- */
+// Esta es la pantalla principal para el administrador.
 function PanelAdmin() {
-  // --- Estados del componente ---
+  // Aquí guardamos cosas importantes.
   const [pacientes, setPacientes] = useState([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
@@ -27,10 +17,10 @@ function PanelAdmin() {
   const [pacienteEditando, setPacienteEditando] = useState(null);
   const [errorFormulario, setErrorFormulario] = useState("");
 
-  /** Pestaña activa: "pacientes" o "citas" */
+  // Para saber qué botón tocamos.
   const [pestanaActiva, setPestanaActiva] = useState("pacientes");
 
-  /** Estado del formulario de pacientes */
+  // Aquí anotamos los datos de la persona.
   const [formulario, setFormulario] = useState({
     nombre: "",
     edad: "",
@@ -39,21 +29,19 @@ function PanelAdmin() {
     diagnostico: "",
   });
 
-  // --- Efecto: carga inicial de pacientes ---
+  // Al empezar, buscamos la lista de personas.
   useEffect(() => {
     cargarPacientes();
   }, []);
 
-  // --- Funciones de gestión de pacientes ---
+  // Estas cajitas de código sirven para mover datos.
 
-  /**
-   * Obtiene la lista de todos los pacientes desde el servidor.
-   */
+// Trae a todos los pacientes del internet.
   async function cargarPacientes() {
     try {
       setEstaCargando(true);
       setMensajeError("");
-      const datos = await obtenerPacientes();
+      const datos = await ServicioPacientes.getPacientes();
       setPacientes(datos);
     } catch (errorPeticion) {
       setMensajeError("Error al cargar los pacientes: " + errorPeticion.message);
@@ -62,9 +50,7 @@ function PanelAdmin() {
     }
   }
 
-  /**
-   * Limpia todos los campos del formulario y cierra el modal.
-   */
+// Borra lo que escribimos y cierra la ventanita.
   function limpiarFormulario() {
     setFormulario({ nombre: "", edad: "", telefono: "", correo: "", diagnostico: "" });
     setPacienteEditando(null);
@@ -72,18 +58,13 @@ function PanelAdmin() {
     setErrorFormulario("");
   }
 
-  /**
-   * Abre el formulario vacío para crear un nuevo paciente.
-   */
+// Abre la ventana para anotar a alguien nuevo.
   function abrirFormularioCrear() {
     limpiarFormulario();
     setMostrarFormulario(true);
   }
 
-  /**
-   * Abre el formulario pre-llenado con los datos de un paciente existente.
-   * @param {Object} pacienteSeleccionado - El paciente que se desea editar.
-   */
+// Abre la ventana para cambiar datos de alguien.
   function abrirFormularioEditar(pacienteSeleccionado) {
     setFormulario({
       nombre: pacienteSeleccionado.nombre,
@@ -97,16 +78,13 @@ function PanelAdmin() {
     setErrorFormulario("");
   }
 
-  /**
-   * Valida que los campos obligatorios del formulario de paciente estén completos.
-   * @returns {boolean} true si el formulario es válido.
-   */
+// Revisa que no nos falte escribir nada.
   function validarFormulario() {
     if (!formulario.nombre.trim()) {
       setErrorFormulario("El nombre es obligatorio");
       return false;
     }
-    if (!formulario.edad || isNaN(formulario.edad) || Number(formulario.edad) <= 0) {
+    if (!formulario.edad || isNaN(formulario.edad) || Number(formulario.edad) <= 0) { //isNaN = is not a number
       setErrorFormulario("Ingresa una edad válida");
       return false;
     }
@@ -121,18 +99,14 @@ function PanelAdmin() {
     return true;
   }
 
-  /**
-   * Actualiza el estado del formulario conforme el admin escribe en los campos.
-   * @param {Event} evento - Evento de cambio del input.
-   */
+// Anota lo que vamos escribiendo en los cuadros.
   function manejarCambio(evento) {
     const { name, value } = evento.target;
+    // Los 3 puntos '...' copian lo de antes para no borrar nada al escribir.
     setFormulario((estadoAnterior) => ({ ...estadoAnterior, [name]: value }));
   }
 
-  /**
-   * Envía los datos del formulario al servidor.
-   */
+// Manda los datos al internet para guardarlos.
   async function manejarEnvio() {
     setErrorFormulario("");
 
@@ -143,12 +117,12 @@ function PanelAdmin() {
       edad: Number(formulario.edad),
       fechaRegistro: pacienteEditando
         ? pacienteEditando.fechaRegistro
-        : new Date().toISOString().split("T")[0],
+        : new Date().toISOString().split("T")[0], 
     };
 
     try {
       if (pacienteEditando) {
-        await actualizarPaciente(pacienteEditando.id, datosPaciente);
+        await ServicioPacientes.patchPacientes(datosPaciente, pacienteEditando.id);
         Swal.fire({
           icon: "success",
           title: "Paciente actualizado",
@@ -157,7 +131,7 @@ function PanelAdmin() {
           showConfirmButton: false,
         });
       } else {
-        await crearPaciente(datosPaciente);
+        await ServicioPacientes.postPacientes(datosPaciente);
         Swal.fire({
           icon: "success",
           title: "Paciente creado",
@@ -179,10 +153,7 @@ function PanelAdmin() {
     }
   }
 
-  /**
-   * Elimina un paciente permanentemente tras confirmación del admin.
-   * @param {Object} pacienteSeleccionado - El paciente que se desea eliminar.
-   */
+// Borra a alguien si el jefe dice que sí.
   async function manejarEliminar(pacienteSeleccionado) {
     const resultado = await Swal.fire({
       icon: "warning",
@@ -198,7 +169,7 @@ function PanelAdmin() {
     if (!resultado.isConfirmed) return;
 
     try {
-      await eliminarPaciente(pacienteSeleccionado.id);
+      await ServicioPacientes.deletePacientes(pacienteSeleccionado.id);
       await cargarPacientes();
       Swal.fire({
         icon: "success",
@@ -217,19 +188,19 @@ function PanelAdmin() {
     }
   }
 
-  // --- Renderizado condicional: estado de carga ---
+// Si todavía está cargando, mostramos un aviso.
   if (estaCargando) return <IndicadorCarga mensaje="Cargando pacientes..." />;
 
-  // --- Renderizado principal ---
+// Aquí dibujamos todo lo que se ve en pantalla.
   return (
     <div id="panelAdmin" className="panelAdmin">
-      {/* Encabezado del panel */}
+      {/* El título de arriba. */}
       <div className="panelAdminEncabezado">
         <h1 className="panelAdminTitulo">Panel de Administración</h1>
         <p className="panelAdminSubtitulo">Gestión integral de Pacientes y Citas</p>
       </div>
 
-      {/* Pestañas de navegación interna con iconos */}
+      {/* Los botones para cambiar de lugar. */}
       <div className="panelAdminPestanas">
         <button
           id="pestanaPacientes"
@@ -257,12 +228,10 @@ function PanelAdmin() {
         </button>
       </div>
 
-      {/* ============================== */}
-      {/* PESTAÑA: Gestión de Pacientes  */}
-      {/* ============================== */}
+      {/* Sección para cuidar a los pacientes. */}
       {pestanaActiva === "pacientes" && (
         <>
-          {/* Mensaje de error global */}
+          {/* Un aviso si algo sale mal. */}
           {mensajeError && (
             <div className="mensajeError">
               <AlertCircle size={16} />
@@ -270,7 +239,7 @@ function PanelAdmin() {
             </div>
           )}
 
-          {/* Barra de acciones: crear + contador */}
+          {/* Botón para agregar y contador. */}
           <div className="panelAdminAcciones">
             <button
               id="botonCrearPaciente"
@@ -285,7 +254,7 @@ function PanelAdmin() {
             </span>
           </div>
 
-          {/* Modal de formulario (crear / editar paciente) */}
+          {/* La ventanita para anotar datos. */}
           {mostrarFormulario && (
             <div className="panelAdminModal">
               <div className="panelAdminModalContenido">
@@ -293,7 +262,7 @@ function PanelAdmin() {
                   {pacienteEditando ? "Editar Paciente" : "Nuevo Paciente"}
                 </h2>
 
-                {/* Error de validación del formulario */}
+                {/* Aviso si olvidaste escribir algo. */}
                 {errorFormulario && (
                   <div className="mensajeError">
                     <AlertCircle size={16} />
@@ -302,7 +271,7 @@ function PanelAdmin() {
                 )}
 
                 <div id="formularioPaciente" className="formulario">
-                  {/* Campo: Nombre Completo */}
+                  {/* Para poner el nombre. */}
                   <div className="formularioGrupo">
                     <label htmlFor="campoNombrePaciente" className="formularioEtiqueta">
                       <User size={14} />
@@ -319,7 +288,7 @@ function PanelAdmin() {
                     />
                   </div>
 
-                  {/* Fila: Edad + Teléfono */}
+                  {/* Para poner edad y número. */}
                   <div className="formularioFila">
                     <div className="formularioGrupo">
                       <label htmlFor="campoEdadPaciente" className="formularioEtiqueta">
@@ -353,7 +322,7 @@ function PanelAdmin() {
                     </div>
                   </div>
 
-                  {/* Campo: Correo */}
+                  {/* Para poner el email. */}
                   <div className="formularioGrupo">
                     <label htmlFor="campoCorreoPaciente" className="formularioEtiqueta">
                       <Mail size={14} />
@@ -370,7 +339,7 @@ function PanelAdmin() {
                     />
                   </div>
 
-                  {/* Campo: Diagnóstico */}
+                  {/* Para escribir qué le duele. */}
                   <div className="formularioGrupo">
                     <label htmlFor="campoDiagnosticoPaciente" className="formularioEtiqueta">
                       <FileText size={14} />
@@ -387,7 +356,7 @@ function PanelAdmin() {
                     />
                   </div>
 
-                  {/* Botones del modal: guardar / cancelar */}
+                  {/* Botones para guardar o salir. */}
                   <div className="formularioBotonesModal">
                     <button
                       type="button"
@@ -411,7 +380,7 @@ function PanelAdmin() {
             </div>
           )}
 
-          {/* Tabla de pacientes registrados */}
+          {/* La lista de todas las personas. */}
           <div className="panelAdminTabla">
             {pacientes.length === 0 ? (
               <div className="panelAdminVacio">
@@ -467,14 +436,10 @@ function PanelAdmin() {
         </>
       )}
 
-      {/* ========================== */}
-      {/* PESTAÑA: Gestión de Citas  */}
-      {/* ========================== */}
+      {/* Sección para ver las citas. */}
       {pestanaActiva === "citas" && <AdminCitas />}
 
-      {/* ========================== */}
-      {/* PESTAÑA: Gestión de Usuarios */}
-      {/* ========================== */}
+      {/* Sección para cuidar a los usuarios. */}
       {pestanaActiva === "usuarios" && <AdminUsuarios />}
     </div>
   );

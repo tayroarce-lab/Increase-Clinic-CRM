@@ -5,7 +5,7 @@
  */
 
 import { createContext, useState, useContext, useEffect } from "react";
-import { iniciarSesion, registrarUsuario } from "../services/ServicioUsuarios";
+import ServicioUsuarios from "../services/ServicioUsuarios";
 
 /** Contexto de autenticación (valor inicial: null) */
 const ContextoAutenticacion = createContext(null);
@@ -44,7 +44,9 @@ function ProveedorAutenticacion({ children }) {
    * @returns {Promise<Object>} Los datos del usuario autenticado.
    */
   async function login(correo, contrasena) {
-    const datosUsuario = await iniciarSesion(correo, contrasena);
+    const usuarios = await ServicioUsuarios.getUser();
+    const datosUsuario = usuarios.find(u => u.correo === correo && u.contrasena === contrasena);
+    if (!datosUsuario) throw new Error("Credenciales incorrectas");
     setUsuario(datosUsuario);
     localStorage.setItem("usuarioIncreaseClinic", JSON.stringify(datosUsuario));
     return datosUsuario;
@@ -56,7 +58,14 @@ function ProveedorAutenticacion({ children }) {
    * @returns {Promise<Object>} Los datos del usuario recién creado.
    */
   async function registro(datosRegistro) {
-    const nuevoUsuario = await registrarUsuario(datosRegistro);
+    const usuarios = await ServicioUsuarios.getUser();
+    if (usuarios.some(u => u.nombreUsuario === datosRegistro.nombreUsuario)) {
+      throw new Error("El nombre de usuario ya existe");
+    }
+    if (usuarios.some(u => u.correo === datosRegistro.correo)) {
+      throw new Error("Este correo electrónico ya está registrado");
+    }
+    const nuevoUsuario = await ServicioUsuarios.postUser({ ...datosRegistro, rol: "cliente" });
     setUsuario(nuevoUsuario);
     localStorage.setItem("usuarioIncreaseClinic", JSON.stringify(nuevoUsuario));
     return nuevoUsuario;

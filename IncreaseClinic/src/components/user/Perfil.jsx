@@ -1,8 +1,4 @@
-/**
- * Perfil.jsx - Componente de perfil del cliente.
- * Muestra la información personal del usuario autenticado en una tarjeta visual.
- * Los datos se obtienen del contexto de autenticación (no del servidor directamente).
- */
+// Aquí puedes ver tus datos personales.
 
 import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import { User, AtSign, Mail, Shield } from "lucide-react";
@@ -13,22 +9,22 @@ function Perfil() {
 
   return (
     <div id="perfilCliente" className="perfilCliente">
-      {/* Encabezado de la sección */}
+      {/* El título de arriba. */}
       <div className="perfilClienteEncabezado">
         <h1 className="perfilClienteTitulo">Mi Perfil</h1>
         <p className="perfilClienteSubtitulo">Información personal</p>
       </div>
 
-      {/* Tarjeta de perfil */}
+      {/* La tarjeta con tus datos. */}
       <div className="perfilClienteTarjeta">
-        {/* Avatar del usuario con icono profesional */}
+        {/* Tu dibujito de perfil. */}
         <div className="perfilClienteAvatar">
           <User size={48} strokeWidth={1.5} color="white" />
         </div>
 
-        {/* Datos del usuario */}
+        {/* Aquí están tus datos. */}
         <div className="perfilClienteDatos">
-          {/* Nombre completo */}
+          {/* Tu nombre real. */}
           <div className="perfilClienteCampo">
             <span className="perfilClienteEtiqueta">
               <User size={13} />
@@ -39,7 +35,7 @@ function Perfil() {
             </span>
           </div>
 
-          {/* Nombre de usuario */}
+          {/* Tu nombre de usuario. */}
           <div className="perfilClienteCampo">
             <span className="perfilClienteEtiqueta">
               <AtSign size={13} />
@@ -48,7 +44,7 @@ function Perfil() {
             <span className="perfilClienteValor">{usuario.nombreUsuario}</span>
           </div>
 
-          {/* Correo electrónico */}
+          {/* Tu email. */}
           <div className="perfilClienteCampo">
             <span className="perfilClienteEtiqueta">
               <Mail size={13} />
@@ -59,7 +55,7 @@ function Perfil() {
             </span>
           </div>
 
-          {/* Rol del usuario */}
+          {/* Qué tipo de cuenta tienes. */}
           <div className="perfilClienteCampo">
             <span className="perfilClienteEtiqueta">
               <Shield size={13} />

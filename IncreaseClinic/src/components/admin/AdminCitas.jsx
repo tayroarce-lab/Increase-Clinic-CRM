@@ -1,40 +1,30 @@
 import { useState, useEffect } from "react";
-import {
-  obtenerTodasLasCitas,
-  actualizarCita,
-  eliminarCita,
-} from "../../services/ServicioCitas";
+import ServicioCitas from "../../services/ServicioCitas";
 import IndicadorCarga from "../common/IndicadorCarga";
 import { AlertCircle, CheckCircle, XCircle, RotateCcw, Trash2, CalendarDays } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/AdminCitas.css";
 
-/**
- * AdminCitas - Componente para la gestión de citas desde el panel de administrador.
- * Permite al admin visualizar todas las citas solicitadas y cambiar su estado
- * (pendiente, confirmada, cancelada) o eliminarlas del sistema.
- */
+// Aquí el jefe mira y cambia las citas.
 function AdminCitas() {
-  // --- Estados del componente ---
+  // Aquí guardamos los datos de las citas.
   const [listaCitas, setListaCitas] = useState([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
 
-  // --- Efecto: carga inicial de todas las citas ---
+  // Al empezar, buscamos todas las citas.
   useEffect(() => {
     cargarTodasLasCitas();
   }, []);
 
-  // --- Funciones principales ---
+  // Estas cajitas de código mueven los datos de las citas.
 
-  /**
-   * Obtiene todas las citas del servidor sin importar el usuario.
-   */
+// Trae todas las citas del internet.
   async function cargarTodasLasCitas() {
     try {
       setEstaCargando(true);
       setMensajeError("");
-      const citasRecibidas = await obtenerTodasLasCitas();
+      const citasRecibidas = await ServicioCitas.getCitas();
       setListaCitas(citasRecibidas);
     } catch (errorPeticion) {
       setMensajeError(`Error al cargar las citas: ${errorPeticion.message}`);
@@ -43,11 +33,7 @@ function AdminCitas() {
     }
   }
 
-  /**
-   * Cambia el estado de una cita y actualiza la lista visual.
-   * @param {Object} citaSeleccionada - La cita cuyo estado se quiere modificar.
-   * @param {string} nuevoEstado - El nuevo estado: "pendiente", "confirmada" o "cancelada".
-   */
+// Cambia si la cita está lista, pendiente o cancelada.
   async function cambiarEstadoCita(citaSeleccionada, nuevoEstado) {
     const alertaConfirmacion = await Swal.fire({
       icon: "question",
@@ -63,8 +49,8 @@ function AdminCitas() {
     if (!alertaConfirmacion.isConfirmed) return;
 
     try {
-      const citaActualizada = { ...citaSeleccionada, estado: nuevoEstado };
-      await actualizarCita(citaSeleccionada.id, citaActualizada);
+      const citaActualizada = { ...citaSeleccionada, estado: nuevoEstado }; // los 3 puntos "..." copian lo de antes para no borrar nada al escribir
+      await ServicioCitas.patchCitas(citaActualizada, citaSeleccionada.id);
       await cargarTodasLasCitas();
 
       Swal.fire({
@@ -84,10 +70,7 @@ function AdminCitas() {
     }
   }
 
-  /**
-   * Elimina permanentemente una cita tras confirmación del admin.
-   * @param {Object} citaSeleccionada - La cita que se quiere eliminar.
-   */
+// Borra una cita para siempre si el jefe quiere.
   async function confirmarEliminacionCita(citaSeleccionada) {
     const alertaConfirmacion = await Swal.fire({
       icon: "warning",
@@ -103,7 +86,7 @@ function AdminCitas() {
     if (!alertaConfirmacion.isConfirmed) return;
 
     try {
-      await eliminarCita(citaSeleccionada.id);
+      await ServicioCitas.deleteCitas(citaSeleccionada.id);
       await cargarTodasLasCitas();
 
       Swal.fire({
@@ -123,11 +106,7 @@ function AdminCitas() {
     }
   }
 
-  /**
-   * Retorna la clase CSS correspondiente al badge de estado de la cita.
-   * @param {string} estadoCita - El estado actual.
-   * @returns {string} La clase CSS asociada al estado.
-   */
+// Elige el color del aviso según cómo esté la cita.
   function resolverEstiloEstado(estadoCita) {
     const mapaEstilos = {
       pendiente: "estadoCitaPendiente",
@@ -137,15 +116,15 @@ function AdminCitas() {
     return mapaEstilos[estadoCita] || "";
   }
 
-  // --- Renderizado condicional: estado de carga ---
+// Si todavía está cargando, mostramos un aviso.
   if (estaCargando) {
     return <IndicadorCarga mensaje="Cargando todas las citas..." />;
   }
 
-  // --- Renderizado principal ---
+// Aquí dibujamos lo que se ve en la pantalla.
   return (
     <div id="adminCitasContenedor" className="panelAdmin">
-      {/* Mensaje de error si la petición falló */}
+      {/* Un aviso si algo sale mal. */}
       {mensajeError && (
         <div className="mensajeError">
           <AlertCircle size={16} />
@@ -153,14 +132,14 @@ function AdminCitas() {
         </div>
       )}
 
-      {/* Contador de citas totales */}
+      {/* Dice cuántas citas hay en total. */}
       <div className="panelAdminAcciones">
         <span className="panelAdminContador">
           Total: {listaCitas.length} citas
         </span>
       </div>
 
-      {/* Tabla de citas o mensaje vacío */}
+      {/* La lista de citas o un aviso si no hay ninguna. */}
       <div className="panelAdminTabla">
         {listaCitas.length === 0 ? (
           <div className="panelAdminVacio">
@@ -194,7 +173,7 @@ function AdminCitas() {
                     </span>
                   </td>
                   <td className="tablaCelda tablaCeldaAcciones">
-                    {/* Botón para confirmar la cita */}
+                    {/* Botón para decir que la cita está bien. */}
                     {cita.estado !== "confirmada" && (
                       <button
                         className="botonAccion botonAccionEditar"
@@ -204,7 +183,7 @@ function AdminCitas() {
                         <span>Confirmar</span>
                       </button>
                     )}
-                    {/* Botón para cancelar la cita */}
+                    {/* Botón para decir que la cita no se hace. */}
                     {cita.estado !== "cancelada" && (
                       <button
                         className="botonAccion botonAccionCancelar"
@@ -214,7 +193,7 @@ function AdminCitas() {
                         <span>Cancelar</span>
                       </button>
                     )}
-                    {/* Botón para volver a pendiente */}
+                    {/* Botón para poner la cita en espera. */}
                     {cita.estado !== "pendiente" && (
                       <button
                         className="botonAccion botonAccionPendiente"
@@ -224,7 +203,7 @@ function AdminCitas() {
                         <span>Pendiente</span>
                       </button>
                     )}
-                    {/* Botón para eliminar definitivamente */}
+                    {/* Botón para borrar la cita de la lista. */}
                     <button
                       className="botonAccion botonAccionEliminar"
                       onClick={() => confirmarEliminacionCita(cita)}
