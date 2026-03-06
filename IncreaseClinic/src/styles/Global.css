@@ -1,0 +1,347 @@
+/* ===================================
+   IncreaseClinic - Sistema de Diseño
+   Base y Utilidades Globales
+   =================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* --- Variables Globales --- */
+:root {
+  /* Colores Principales */
+  --colorPrimario: #2563EB;
+  --colorPrimarioHover: #1D4ED8;
+  --colorPrimarioClaro: #3b82f6;
+  --colorPrimarioSuave: rgba(37, 99, 235, 0.08);
+  --colorFondo: #F8FAFC;
+  --colorFondoTarjeta: #FFFFFF;
+  --colorTexto: #1E293B;
+  --colorTextoSecundario: #64748B;
+  --colorTextoTenue: #94a3b8;
+
+  /* Estados */
+  --colorExito: #16A34A;
+  --colorError: #DC2626;
+  --colorAdvertencia: #F59E0B;
+  --colorInfo: #0EA5E9;
+  --colorErrorFondo: rgba(220, 38, 38, 0.08);
+  --colorExitoFondo: rgba(22, 163, 74, 0.08);
+
+  /* Bordes y Sombras */
+  --colorBorde: #e2e8f0;
+  --colorBordeHover: #cbd5e1;
+  --radioRedondeo: 12px;
+  --radioRedondeoGrande: 16px;
+  --sombra: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --sombraTarjeta: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --sombraHover: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --sombraModal: 0 20px 60px -15px rgba(0, 0, 0, 0.2);
+
+  /* Transición y Fuente */
+  --transicion: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --fuentePrincipal: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* --- Reset y Base --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--fuentePrincipal);
+  background: var(--colorFondo);
+  color: var(--colorTexto);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--colorPrimario);
+  text-decoration: none;
+  transition: var(--transicion);
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--colorPrimarioHover);
+}
+
+/* --- Utilidades Compartidas --- */
+.contenidoPrincipal {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .contenidoPrincipal {
+    padding: 1rem;
+  }
+}
+
+/* --- Animaciones Reutilizables --- */
+@keyframes aparecerDesdeAbajo {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aparecerOpacidad {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sacudir {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--colorFondo);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  border: 3px solid var(--colorFondo);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* --- Formulario Compartido --- */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.formularioGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.formularioFila {
+  display: flex;
+  gap: 1rem;
+}
+
+.formularioEtiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--colorTextoSecundario);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formularioCampo {
+  padding: 0.7rem 1rem;
+  background: var(--colorFondo);
+  border: 1.5px solid var(--colorBorde);
+  border-radius: 10px;
+  color: var(--colorTexto);
+  font-size: 0.95rem;
+  font-family: var(--fuentePrincipal);
+  transition: var(--transicion);
+  outline: none;
+}
+
+.formularioCampo::placeholder {
+  color: var(--colorTextoTenue);
+}
+
+.formularioCampo:focus {
+  border-color: var(--colorPrimario);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  background: var(--colorFondoTarjeta);
+}
+
+.formularioCampo:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.formularioCampoArea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formularioBoton {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicion);
+  font-family: var(--fuentePrincipal);
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.formularioBotonPrimario {
+  background: var(--colorPrimario);
+  color: white;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.formularioBotonSecundario {
+  background: var(--colorFondo);
+  color: var(--colorTextoSecundario);
+  border: 1.5px solid var(--colorBorde);
+}
+
+@media (max-width: 768px) {
+  .formularioFila {
+    flex-direction: column;
+  }
+}
+
+/* --- Mensaje de Error --- */
+.mensajeError {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--colorErrorFondo);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  border-radius: 10px;
+  color: var(--colorError);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  animation: sacudir 0.4s ease-out;
+}
+
+/* --- Tabla y Botones de Acción --- */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--colorFondoTarjeta);
+  border-radius: var(--radioRedondeoGrande);
+  overflow: hidden;
+  border: 1px solid var(--colorBorde);
+  box-shadow: var(--sombraTarjeta);
+}
+
+.tablaEncabezado {
+  background: var(--colorPrimarioSuave);
+}
+
+.tablaEncabezado th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--colorPrimario);
+  border-bottom: 1.5px solid var(--colorBorde);
+}
+
+.tablaFila:hover {
+  background: var(--colorPrimarioSuave);
+}
+
+.tablaCelda {
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+  color: var(--colorTextoSecundario);
+  border-bottom: 1px solid var(--colorBorde);
+}
+
+.botonAccion {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicion);
+  font-family: var(--fuentePrincipal);
+  white-space: nowrap;
+}
+
+.botonAccionEliminar {
+  background: rgba(220, 38, 38, 0.06);
+  color: var(--colorError);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.botonAccionEditar {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--colorPrimario);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+/* --- Estados de Cita --- */
+.estadoCita {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.estadoCitaPendiente {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--colorAdvertencia);
+}
+
+.estadoCitaConfirmada {
+  background: var(--colorExitoFondo);
+  color: var(--colorExito);
+}
+
+.estadoCitaCancelada {
+  background: var(--colorErrorFondo);
+  color: var(--colorError);
+}

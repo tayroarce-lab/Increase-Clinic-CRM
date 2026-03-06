@@ -1,0 +1,44 @@
+/* --- Buscador de Usuarios Admin --- */
+.panelAdminBuscador {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.panelAdminIconoBusqueda {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--colorTextoTenue);
+  pointer-events: none;
+}
+
+.panelAdminBuscador .formularioCampo {
+  padding-left: 36px;
+  width: 100%;
+}
+
+.textoTenue {
+  color: var(--colorTextoTenue);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-style: italic;
+}
+
+.panelAdminVacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--colorTextoTenue);
+  background: var(--colorFondo);
+  border-radius: var(--radioRedondeoGrande);
+  border: 1.5px dashed var(--colorBorde);
+  margin: 1rem 0;
+}

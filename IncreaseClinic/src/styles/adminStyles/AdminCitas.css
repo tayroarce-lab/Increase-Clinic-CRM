@@ -1,0 +1,6 @@
+/* --- Gestión de Citas Admin --- */
+.panelAdminTabla {
+  animation: aparecerDesdeAbajo 0.4s ease-out;
+}
+
+/* Las citas administrativas usan principalmente los estilos compartidos de .tabla y .botonAccion en Global.css */

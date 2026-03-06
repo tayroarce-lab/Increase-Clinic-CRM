@@ -1,0 +1,56 @@
+/* --- Servicios Sección Inicio --- */
+.servicios {
+  padding: 4rem 1rem;
+}
+
+.serviciosTitulo {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 4rem;
+  color: var(--colorTexto);
+  letter-spacing: -0.02em;
+}
+
+.serviciosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.servicioCard {
+  background: var(--colorFondoTarjeta);
+  padding: 3.5rem 2.5rem;
+  border-radius: var(--radioRedondeoGrande);
+  border: 1px solid var(--colorBorde);
+  transition: var(--transicion);
+  text-align: center;
+  box-shadow: var(--sombraTarjeta);
+}
+
+.servicioCard:hover {
+  transform: translateY(-10px);
+  border-color: var(--colorPrimario);
+  box-shadow: var(--sombraHover);
+}
+
+.servicioCardIcono {
+  font-size: 3.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  color: var(--colorPrimario);
+}
+
+.servicioCard h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--colorPrimario);
+}
+
+.servicioCard p {
+  color: var(--colorTextoSecundario);
+  font-size: 1rem;
+  line-height: 1.6;
+}

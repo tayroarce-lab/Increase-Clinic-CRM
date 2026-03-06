@@ -3,10 +3,11 @@ import {
   obtenerTodasLasCitas,
   actualizarCita,
   eliminarCita,
-} from "../services/ServicioCitas";
-import IndicadorCarga from "./IndicadorCarga";
+} from "../../services/ServicioCitas";
+import IndicadorCarga from "../common/IndicadorCarga";
 import { AlertCircle, CheckCircle, XCircle, RotateCcw, Trash2, CalendarDays } from "lucide-react";
 import Swal from "sweetalert2";
+import "../../styles/adminStyles/AdminCitas.css";
 
 /**
  * AdminCitas - Componente para la gestión de citas desde el panel de administrador.
@@ -129,9 +130,9 @@ function AdminCitas() {
    */
   function resolverEstiloEstado(estadoCita) {
     const mapaEstilos = {
-      pendiente: "estadoCita--pendiente",
-      confirmada: "estadoCita--confirmada",
-      cancelada: "estadoCita--cancelada",
+      pendiente: "estadoCitaPendiente",
+      confirmada: "estadoCitaConfirmada",
+      cancelada: "estadoCitaCancelada",
     };
     return mapaEstilos[estadoCita] || "";
   }
@@ -153,22 +154,22 @@ function AdminCitas() {
       )}
 
       {/* Contador de citas totales */}
-      <div className="panelAdmin__acciones">
-        <span className="panelAdmin__contador">
+      <div className="panelAdminAcciones">
+        <span className="panelAdminContador">
           Total: {listaCitas.length} citas
         </span>
       </div>
 
       {/* Tabla de citas o mensaje vacío */}
-      <div className="panelAdmin__tabla">
+      <div className="panelAdminTabla">
         {listaCitas.length === 0 ? (
-          <div className="panelAdmin__vacio">
+          <div className="panelAdminVacio">
             <CalendarDays size={40} strokeWidth={1.5} />
             <p>No hay citas solicitadas aún.</p>
           </div>
         ) : (
           <table id="tablaCitasAdmin" className="tabla">
-            <thead className="tabla__encabezado">
+            <thead className="tablaEncabezado">
               <tr>
                 <th>ID</th>
                 <th>Paciente</th>
@@ -179,24 +180,24 @@ function AdminCitas() {
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody className="tabla__cuerpo">
+            <tbody className="tablaCuerpo">
               {listaCitas.map((cita) => (
-                <tr key={cita.id} className="tabla__fila">
-                  <td className="tabla__celda">{cita.id}</td>
-                  <td className="tabla__celda">{cita.nombrePaciente}</td>
-                  <td className="tabla__celda">{cita.fecha}</td>
-                  <td className="tabla__celda">{cita.hora}</td>
-                  <td className="tabla__celda">{cita.motivo}</td>
-                  <td className="tabla__celda">
+                <tr key={cita.id} className="tablaFila">
+                  <td className="tablaCelda">{cita.id}</td>
+                  <td className="tablaCelda">{cita.nombrePaciente}</td>
+                  <td className="tablaCelda">{cita.fecha}</td>
+                  <td className="tablaCelda">{cita.hora}</td>
+                  <td className="tablaCelda">{cita.motivo}</td>
+                  <td className="tablaCelda">
                     <span className={`estadoCita ${resolverEstiloEstado(cita.estado)}`}>
                       {cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)}
                     </span>
                   </td>
-                  <td className="tabla__celda tabla__celda--acciones">
+                  <td className="tablaCelda tablaCeldaAcciones">
                     {/* Botón para confirmar la cita */}
                     {cita.estado !== "confirmada" && (
                       <button
-                        className="botonAccion botonAccion--editar"
+                        className="botonAccion botonAccionEditar"
                         onClick={() => cambiarEstadoCita(cita, "confirmada")}
                       >
                         <CheckCircle size={13} />
@@ -206,7 +207,7 @@ function AdminCitas() {
                     {/* Botón para cancelar la cita */}
                     {cita.estado !== "cancelada" && (
                       <button
-                        className="botonAccion botonAccion--cancelar"
+                        className="botonAccion botonAccionCancelar"
                         onClick={() => cambiarEstadoCita(cita, "cancelada")}
                       >
                         <XCircle size={13} />
@@ -216,7 +217,7 @@ function AdminCitas() {
                     {/* Botón para volver a pendiente */}
                     {cita.estado !== "pendiente" && (
                       <button
-                        className="botonAccion botonAccion--pendiente"
+                        className="botonAccion botonAccionPendiente"
                         onClick={() => cambiarEstadoCita(cita, "pendiente")}
                       >
                         <RotateCcw size={13} />
@@ -225,7 +226,7 @@ function AdminCitas() {
                     )}
                     {/* Botón para eliminar definitivamente */}
                     <button
-                      className="botonAccion botonAccion--eliminar"
+                      className="botonAccion botonAccionEliminar"
                       onClick={() => confirmarEliminacionCita(cita)}
                     >
                       <Trash2 size={13} />

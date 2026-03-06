@@ -12,8 +12,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProveedorAutenticacion } from "../context/ContextoAutenticacion";
 import RequiereAutenticacion from "../context/RequiereAutenticacion";
 import RequiereRol from "../context/RequiereRol";
-import BarraNavegacion from "../components/BarraNavegacion";
-import PiePagina from "../components/PiePagina";
+import BarraNavegacion from "../components/common/BarraNavegacion";
+import PiePagina from "../components/common/PiePagina";
 
 // Páginas de la aplicación
 import PaginaLogin from "../pages/PaginaLogin";

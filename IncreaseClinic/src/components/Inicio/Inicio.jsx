@@ -1,5 +1,5 @@
-import HeroInicio from "./Inicio/HeroInicio";
-import ServiciosInicio from "./Inicio/ServiciosInicio";
+import HeroInicio from "./HeroInicio";
+import ServiciosInicio from "./ServiciosInicio";
 
 /**
  * Inicio - Componente contenedor de la página de inicio (Landing Page).

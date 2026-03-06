@@ -1,0 +1,28 @@
+/* --- Indicador de Carga --- */
+.indicadorCarga {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1.2rem;
+  min-height: 300px;
+}
+
+.indicadorCarga .iconoGirando {
+  color: var(--colorPrimario);
+}
+
+.indicadorCargaMensaje {
+  color: var(--colorTextoSecundario);
+  font-size: 0.95rem;
+}
+
+.iconoGirando {
+  animation: girarIcono 1s linear infinite;
+}
+
+@keyframes girarIcono {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

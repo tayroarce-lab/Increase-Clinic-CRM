@@ -1,0 +1,111 @@
+/* --- Panel Admin Principal --- */
+.panelAdmin {
+  animation: aparecerDesdeAbajo 0.45s ease-out;
+}
+
+.panelAdminEncabezado {
+  margin-bottom: 1.5rem;
+}
+
+.panelAdminTitulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--colorTexto);
+  letter-spacing: -0.03em;
+}
+
+.panelAdminSubtitulo {
+  color: var(--colorTextoSecundario);
+  font-size: 0.95rem;
+  margin-top: 0.2rem;
+}
+
+/* --- Pestañas del Panel Admin --- */
+.panelAdminPestanas {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--colorBorde);
+  padding-bottom: 0;
+}
+
+.panelAdminPestana {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--colorTextoSecundario);
+  cursor: pointer;
+  transition: var(--transicion);
+  font-family: var(--fuentePrincipal);
+  margin-bottom: -2px;
+}
+
+.panelAdminPestana:hover {
+  color: var(--colorPrimario);
+  background: var(--colorPrimarioSuave);
+  border-radius: 8px 8px 0 0;
+}
+
+.panelAdminPestanaActiva {
+  color: var(--colorPrimario);
+  border-bottom-color: var(--colorPrimario);
+}
+
+/* --- Panel Admin Acciones Globales --- */
+.panelAdminAcciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.panelAdminContador {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* --- Modal Base Admin --- */
+.panelAdminModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.panelAdminModalContenido {
+  background: var(--colorFondoTarjeta);
+  border: 1px solid var(--colorBorde);
+  border-radius: var(--radioRedondeoGrande);
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--sombraModal);
+}
+
+@media (max-width: 768px) {
+  .panelAdminAcciones {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .panelAdminModalContenido {
+    width: 95%;
+    padding: 1.5rem;
+  }
+}

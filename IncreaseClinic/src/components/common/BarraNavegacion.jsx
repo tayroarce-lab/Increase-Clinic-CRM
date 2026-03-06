@@ -8,9 +8,10 @@
  */
 
 import { Link, useNavigate } from "react-router-dom";
-import { useAutenticacion } from "../context/ContextoAutenticacion";
+import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import { HeartPulse, LogIn, UserPlus, LayoutDashboard, User, CalendarDays, LogOut } from "lucide-react";
 import Swal from "sweetalert2";
+import "../../styles/BarraNavegacion.css";
 
 function BarraNavegacion() {
   const { usuario, cerrarSesion } = useAutenticacion();
@@ -49,7 +50,7 @@ function BarraNavegacion() {
   return (
     <nav id="barraNavegacion" className="barraNavegacion">
       {/* Logo de la aplicación con icono profesional */}
-      <div className="barraNavegacion__logo">
+      <div className="barraNavegacionLogo">
         <Link to="/">
           <HeartPulse size={22} strokeWidth={2.5} />
           <span>IncreaseClinic</span>
@@ -57,15 +58,15 @@ function BarraNavegacion() {
       </div>
 
       {/* Enlaces de navegación */}
-      <div className="barraNavegacion__enlaces">
+      <div className="barraNavegacionEnlaces">
         {/* Enlaces para usuario NO autenticado */}
         {!usuario && (
           <>
-            <Link to="/login" className="barraNavegacion__enlace">
+            <Link to="/login" className="barraNavegacionEnlace">
               <LogIn size={16} />
               <span>Iniciar Sesión</span>
             </Link>
-            <Link to="/registro" className="barraNavegacion__enlace barraNavegacion__enlace--resaltado">
+            <Link to="/registro" className="barraNavegacionEnlace barraNavegacionEnlaceResaltado">
               <UserPlus size={16} />
               <span>Registrarse</span>
             </Link>
@@ -74,7 +75,7 @@ function BarraNavegacion() {
 
         {/* Enlaces exclusivos para administradores */}
         {usuario && usuario.rol === "admin" && (
-          <Link to="/admin" className="barraNavegacion__enlace">
+          <Link to="/admin" className="barraNavegacionEnlace">
             <LayoutDashboard size={16} />
             <span>Panel Admin</span>
           </Link>
@@ -83,11 +84,11 @@ function BarraNavegacion() {
         {/* Enlaces exclusivos para clientes */}
         {usuario && usuario.rol === "cliente" && (
           <>
-            <Link to="/perfil" className="barraNavegacion__enlace">
+            <Link to="/perfil" className="barraNavegacionEnlace">
               <User size={16} />
               <span>Mi Perfil</span>
             </Link>
-            <Link to="/citas" className="barraNavegacion__enlace">
+            <Link to="/citas" className="barraNavegacionEnlace">
               <CalendarDays size={16} />
               <span>Mis Citas</span>
             </Link>
@@ -96,13 +97,13 @@ function BarraNavegacion() {
 
         {/* Sección de usuario autenticado: saludo + cerrar sesión */}
         {usuario && (
-          <div className="barraNavegacion__usuario">
-            <span className="barraNavegacion__nombreUsuario">
+          <div className="barraNavegacionUsuario">
+            <span className="barraNavegacionNombreUsuario">
               Hola, {usuario.nombreCompleto || usuario.nombreUsuario}
             </span>
             <button
               id="botonCerrarSesion"
-              className="barraNavegacion__botonSalir"
+              className="barraNavegacionBotonSalir"
               onClick={manejarCerrarSesion}
             >
               <LogOut size={14} />

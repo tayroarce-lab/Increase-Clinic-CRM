@@ -7,9 +7,10 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAutenticacion } from "../context/ContextoAutenticacion";
+import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import { HeartPulse, UserCircle, User, Mail, Lock, ShieldCheck, AlertCircle, UserPlus, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
+import "../../styles/userStyles/Registro.css";
 
 function Registro() {
   // --- Estados del formulario ---
@@ -107,14 +108,14 @@ function Registro() {
 
   return (
     <div id="paginaRegistro" className="paginaAutenticacion">
-      <div className="paginaAutenticacion__tarjeta">
+      <div className="paginaAutenticacionTarjeta">
         {/* Encabezado con icono */}
-        <div className="paginaAutenticacion__encabezado">
-          <div className="paginaAutenticacion__iconoTitulo">
+        <div className="paginaAutenticacionEncabezado">
+          <div className="paginaAutenticacionIconoTitulo">
             <HeartPulse size={32} strokeWidth={2} />
           </div>
-          <h1 className="paginaAutenticacion__titulo">IncreaseClinic</h1>
-          <p className="paginaAutenticacion__subtitulo">Crear Cuenta</p>
+          <h1 className="paginaAutenticacionTitulo">IncreaseClinic</h1>
+          <p className="paginaAutenticacionSubtitulo">Crear Cuenta</p>
         </div>
 
         {/* Mensaje de error */}
@@ -126,15 +127,15 @@ function Registro() {
         )}
 
         {/* Campo: Nombre de usuario */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoNombreUsuario" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoNombreUsuario" className="formularioEtiqueta">
             <UserCircle size={14} />
             <span>Nombre de Usuario</span>
           </label>
           <input
             id="campoNombreUsuario"
             type="text"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Ej: juanperez"
             value={nombreUsuario}
             onChange={(e) => setNombreUsuario(e.target.value)}
@@ -143,15 +144,15 @@ function Registro() {
         </div>
 
         {/* Campo: Nombre completo */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoNombreCompleto" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoNombreCompleto" className="formularioEtiqueta">
             <User size={14} />
             <span>Nombre Completo</span>
           </label>
           <input
             id="campoNombreCompleto"
             type="text"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Ej: Juan Pérez García"
             value={nombreCompleto}
             onChange={(e) => setNombreCompleto(e.target.value)}
@@ -160,15 +161,15 @@ function Registro() {
         </div>
 
         {/* Campo: Correo electrónico */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoCorreoRegistro" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoCorreoRegistro" className="formularioEtiqueta">
             <Mail size={14} />
             <span>Correo Electrónico</span>
           </label>
           <input
             id="campoCorreoRegistro"
             type="email"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Ej: juan@correo.com"
             value={correo}
             onChange={(e) => setCorreo(e.target.value)}
@@ -177,15 +178,15 @@ function Registro() {
         </div>
 
         {/* Campo: Contraseña */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoContrasenaRegistro" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoContrasenaRegistro" className="formularioEtiqueta">
             <Lock size={14} />
             <span>Contraseña</span>
           </label>
           <input
             id="campoContrasenaRegistro"
             type="password"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Mínimo 6 caracteres"
             value={contrasena}
             onChange={(e) => setContrasena(e.target.value)}
@@ -194,15 +195,15 @@ function Registro() {
         </div>
 
         {/* Campo: Confirmar contraseña */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoConfirmarContrasena" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoConfirmarContrasena" className="formularioEtiqueta">
             <ShieldCheck size={14} />
             <span>Confirmar Contraseña</span>
           </label>
           <input
             id="campoConfirmarContrasena"
             type="password"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Repite tu contraseña"
             value={confirmarContrasena}
             onChange={(e) => setConfirmarContrasena(e.target.value)}
@@ -214,7 +215,7 @@ function Registro() {
         <button
           id="botonRegistro"
           type="button"
-          className="formulario__boton formulario__boton--primario"
+          className="formularioBoton formularioBotonPrimario"
           disabled={estaCargando}
           onClick={manejarEnvio}
         >
@@ -232,7 +233,7 @@ function Registro() {
         </button>
 
         {/* Enlace al login */}
-        <p className="paginaAutenticacion__enlace">
+        <p className="paginaAutenticacionEnlace">
           ¿Ya tienes cuenta?{" "}
           <Link to="/login">Inicia sesión aquí</Link>
         </p>

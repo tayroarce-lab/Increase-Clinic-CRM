@@ -92,4 +92,50 @@ async function registrarUsuario(datosUsuario) {
   }
 }
 
-export { obtenerUsuarios, iniciarSesion, registrarUsuario };
+/**
+ * Crea un nuevo usuario con rol de administrador.
+ * @param {Object} datosAdmin - Datos del nuevo administrador.
+ * @returns {Promise<Object>} El usuario creado.
+ */
+async function crearUsuarioAdmin(datosAdmin) {
+  try {
+    // Reutilizamos la lógica de validación (podría refactorizarse, pero por ahora duplicamos para simplicidad)
+    const nombreUsuarioCodificado = encodeURIComponent(datosAdmin.nombreUsuario);
+    const resNombre = await fetch(`${URL_BASE}/usuarios?nombreUsuario=${nombreUsuarioCodificado}`);
+    const existeNombre = await manejarRespuesta(resNombre);
+    if (existeNombre.length > 0) throw new Error("El nombre de usuario ya existe");
+
+    const correoCodificado = encodeURIComponent(datosAdmin.correo);
+    const resCorreo = await fetch(`${URL_BASE}/usuarios?correo=${correoCodificado}`);
+    const existeCorreo = await manejarRespuesta(resCorreo);
+    if (existeCorreo.length > 0) throw new Error("Este correo ya está registrado");
+
+    const respuesta = await fetch(`${URL_BASE}/usuarios`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...datosAdmin, rol: "admin" }),
+    });
+    return await manejarRespuesta(respuesta);
+  } catch (error) {
+    console.error("Error al crear administrador:", error);
+    throw error;
+  }
+}
+
+/**
+ * Elimina un usuario por su ID.
+ * @param {string} idUsuario - El ID del usuario a eliminar.
+ */
+async function eliminarUsuario(idUsuario) {
+  try {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/${idUsuario}`, {
+      method: "DELETE",
+    });
+    return await manejarRespuesta(respuesta);
+  } catch (error) {
+    console.error("Error al eliminar usuario:", error);
+    throw error;
+  }
+}
+
+export { obtenerUsuarios, iniciarSesion, registrarUsuario, crearUsuarioAdmin, eliminarUsuario };

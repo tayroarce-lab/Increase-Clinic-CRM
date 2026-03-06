@@ -4,11 +4,13 @@ import {
   crearPaciente,
   actualizarPaciente,
   eliminarPaciente,
-} from "../services/ServicioPacientes";
-import IndicadorCarga from "./IndicadorCarga";
+} from "../../services/ServicioPacientes";
+import IndicadorCarga from "../common/IndicadorCarga";
 import AdminCitas from "./AdminCitas";
-import { Users, CalendarDays, UserPlus, AlertCircle, Pencil, Trash2, User, Phone, Mail, FileText, Save, X } from "lucide-react";
+import AdminUsuarios from "./AdminUsuarios";
+import { Users, CalendarDays, UserPlus, AlertCircle, Pencil, Trash2, User, Phone, Mail, FileText, Save, X, Shield } from "lucide-react";
 import Swal from "sweetalert2";
+import "../../styles/adminStyles/Admin.css";
 
 /**
  * PanelAdmin - Componente principal del panel de administración.
@@ -222,16 +224,16 @@ function PanelAdmin() {
   return (
     <div id="panelAdmin" className="panelAdmin">
       {/* Encabezado del panel */}
-      <div className="panelAdmin__encabezado">
-        <h1 className="panelAdmin__titulo">Panel de Administración</h1>
-        <p className="panelAdmin__subtitulo">Gestión integral de Pacientes y Citas</p>
+      <div className="panelAdminEncabezado">
+        <h1 className="panelAdminTitulo">Panel de Administración</h1>
+        <p className="panelAdminSubtitulo">Gestión integral de Pacientes y Citas</p>
       </div>
 
       {/* Pestañas de navegación interna con iconos */}
-      <div className="panelAdmin__pestanas">
+      <div className="panelAdminPestanas">
         <button
           id="pestanaPacientes"
-          className={`panelAdmin__pestana ${pestanaActiva === "pacientes" ? "panelAdmin__pestana--activa" : ""}`}
+          className={`panelAdminPestana ${pestanaActiva === "pacientes" ? "panelAdminPestanaActiva" : ""}`}
           onClick={() => setPestanaActiva("pacientes")}
         >
           <Users size={16} />
@@ -239,11 +241,19 @@ function PanelAdmin() {
         </button>
         <button
           id="pestanaCitas"
-          className={`panelAdmin__pestana ${pestanaActiva === "citas" ? "panelAdmin__pestana--activa" : ""}`}
+          className={`panelAdminPestana ${pestanaActiva === "citas" ? "panelAdminPestanaActiva" : ""}`}
           onClick={() => setPestanaActiva("citas")}
         >
           <CalendarDays size={16} />
           <span>Citas Solicitadas</span>
+        </button>
+        <button
+          id="pestanaUsuarios"
+          className={`panelAdminPestana ${pestanaActiva === "usuarios" ? "panelAdminPestanaActiva" : ""}`}
+          onClick={() => setPestanaActiva("usuarios")}
+        >
+          <Shield size={16} />
+          <span>Gestión de Usuarios</span>
         </button>
       </div>
 
@@ -261,25 +271,25 @@ function PanelAdmin() {
           )}
 
           {/* Barra de acciones: crear + contador */}
-          <div className="panelAdmin__acciones">
+          <div className="panelAdminAcciones">
             <button
               id="botonCrearPaciente"
-              className="formulario__boton formulario__boton--primario"
+              className="formularioBoton formularioBotonPrimario"
               onClick={abrirFormularioCrear}
             >
               <UserPlus size={18} />
               <span>Nuevo Paciente</span>
             </button>
-            <span className="panelAdmin__contador">
+            <span className="panelAdminContador">
               Total: {pacientes.length} pacientes
             </span>
           </div>
 
           {/* Modal de formulario (crear / editar paciente) */}
           {mostrarFormulario && (
-            <div className="panelAdmin__modal">
-              <div className="panelAdmin__modalContenido">
-                <h2 className="panelAdmin__modalTitulo">
+            <div className="panelAdminModal">
+              <div className="panelAdminModalContenido">
+                <h2 className="panelAdminModalTitulo">
                   {pacienteEditando ? "Editar Paciente" : "Nuevo Paciente"}
                 </h2>
 
@@ -293,8 +303,8 @@ function PanelAdmin() {
 
                 <div id="formularioPaciente" className="formulario">
                   {/* Campo: Nombre Completo */}
-                  <div className="formulario__grupo">
-                    <label htmlFor="campoNombrePaciente" className="formulario__etiqueta">
+                  <div className="formularioGrupo">
+                    <label htmlFor="campoNombrePaciente" className="formularioEtiqueta">
                       <User size={14} />
                       <span>Nombre Completo</span>
                     </label>
@@ -302,7 +312,7 @@ function PanelAdmin() {
                       id="campoNombrePaciente"
                       type="text"
                       name="nombre"
-                      className="formulario__campo"
+                      className="formularioCampo"
                       placeholder="Nombre del paciente"
                       value={formulario.nombre}
                       onChange={manejarCambio}
@@ -310,24 +320,24 @@ function PanelAdmin() {
                   </div>
 
                   {/* Fila: Edad + Teléfono */}
-                  <div className="formulario__fila">
-                    <div className="formulario__grupo">
-                      <label htmlFor="campoEdadPaciente" className="formulario__etiqueta">
+                  <div className="formularioFila">
+                    <div className="formularioGrupo">
+                      <label htmlFor="campoEdadPaciente" className="formularioEtiqueta">
                         <span>Edad</span>
                       </label>
                       <input
                         id="campoEdadPaciente"
                         type="number"
                         name="edad"
-                        className="formulario__campo"
+                        className="formularioCampo"
                         placeholder="Edad"
                         value={formulario.edad}
                         onChange={manejarCambio}
                       />
                     </div>
 
-                    <div className="formulario__grupo">
-                      <label htmlFor="campoTelefonoPaciente" className="formulario__etiqueta">
+                    <div className="formularioGrupo">
+                      <label htmlFor="campoTelefonoPaciente" className="formularioEtiqueta">
                         <Phone size={14} />
                         <span>Teléfono</span>
                       </label>
@@ -335,7 +345,7 @@ function PanelAdmin() {
                         id="campoTelefonoPaciente"
                         type="text"
                         name="telefono"
-                        className="formulario__campo"
+                        className="formularioCampo"
                         placeholder="555-0000"
                         value={formulario.telefono}
                         onChange={manejarCambio}
@@ -344,8 +354,8 @@ function PanelAdmin() {
                   </div>
 
                   {/* Campo: Correo */}
-                  <div className="formulario__grupo">
-                    <label htmlFor="campoCorreoPaciente" className="formulario__etiqueta">
+                  <div className="formularioGrupo">
+                    <label htmlFor="campoCorreoPaciente" className="formularioEtiqueta">
                       <Mail size={14} />
                       <span>Correo</span>
                     </label>
@@ -353,7 +363,7 @@ function PanelAdmin() {
                       id="campoCorreoPaciente"
                       type="email"
                       name="correo"
-                      className="formulario__campo"
+                      className="formularioCampo"
                       placeholder="correo@ejemplo.com"
                       value={formulario.correo}
                       onChange={manejarCambio}
@@ -361,15 +371,15 @@ function PanelAdmin() {
                   </div>
 
                   {/* Campo: Diagnóstico */}
-                  <div className="formulario__grupo">
-                    <label htmlFor="campoDiagnosticoPaciente" className="formulario__etiqueta">
+                  <div className="formularioGrupo">
+                    <label htmlFor="campoDiagnosticoPaciente" className="formularioEtiqueta">
                       <FileText size={14} />
                       <span>Diagnóstico</span>
                     </label>
                     <textarea
                       id="campoDiagnosticoPaciente"
                       name="diagnostico"
-                      className="formulario__campo formulario__campo--area"
+                      className="formularioCampo formularioCampoArea"
                       placeholder="Diagnóstico o motivo de consulta"
                       value={formulario.diagnostico}
                       onChange={manejarCambio}
@@ -378,10 +388,10 @@ function PanelAdmin() {
                   </div>
 
                   {/* Botones del modal: guardar / cancelar */}
-                  <div className="formulario__botonesModal">
+                  <div className="formularioBotonesModal">
                     <button
                       type="button"
-                      className="formulario__boton formulario__boton--primario"
+                      className="formularioBoton formularioBotonPrimario"
                       onClick={manejarEnvio}
                     >
                       <Save size={16} />
@@ -389,7 +399,7 @@ function PanelAdmin() {
                     </button>
                     <button
                       type="button"
-                      className="formulario__boton formulario__boton--secundario"
+                      className="formularioBoton formularioBotonSecundario"
                       onClick={limpiarFormulario}
                     >
                       <X size={16} />
@@ -402,15 +412,15 @@ function PanelAdmin() {
           )}
 
           {/* Tabla de pacientes registrados */}
-          <div className="panelAdmin__tabla">
+          <div className="panelAdminTabla">
             {pacientes.length === 0 ? (
-              <div className="panelAdmin__vacio">
+              <div className="panelAdminVacio">
                 <Users size={40} strokeWidth={1.5} />
                 <p>No hay pacientes registrados aún.</p>
               </div>
             ) : (
               <table id="tablaPacientes" className="tabla">
-                <thead className="tabla__encabezado">
+                <thead className="tablaEncabezado">
                   <tr>
                     <th>ID</th>
                     <th>Nombre</th>
@@ -422,26 +432,26 @@ function PanelAdmin() {
                     <th>Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="tabla__cuerpo">
+                <tbody className="tablaCuerpo">
                   {pacientes.map((paciente) => (
-                    <tr key={paciente.id} className="tabla__fila">
-                      <td className="tabla__celda">{paciente.id}</td>
-                      <td className="tabla__celda">{paciente.nombre}</td>
-                      <td className="tabla__celda">{paciente.edad}</td>
-                      <td className="tabla__celda">{paciente.telefono}</td>
-                      <td className="tabla__celda">{paciente.correo}</td>
-                      <td className="tabla__celda">{paciente.diagnostico}</td>
-                      <td className="tabla__celda">{paciente.fechaRegistro}</td>
-                      <td className="tabla__celda tabla__celda--acciones">
+                    <tr key={paciente.id} className="tablaFila">
+                      <td className="tablaCelda">{paciente.id}</td>
+                      <td className="tablaCelda">{paciente.nombre}</td>
+                      <td className="tablaCelda">{paciente.edad}</td>
+                      <td className="tablaCelda">{paciente.telefono}</td>
+                      <td className="tablaCelda">{paciente.correo}</td>
+                      <td className="tablaCelda">{paciente.diagnostico}</td>
+                      <td className="tablaCelda">{paciente.fechaRegistro}</td>
+                      <td className="tablaCelda tablaCeldaAcciones">
                         <button
-                          className="botonAccion botonAccion--editar"
+                          className="botonAccion botonAccionEditar"
                           onClick={() => abrirFormularioEditar(paciente)}
                         >
                           <Pencil size={13} />
                           <span>Editar</span>
                         </button>
                         <button
-                          className="botonAccion botonAccion--eliminar"
+                          className="botonAccion botonAccionEliminar"
                           onClick={() => manejarEliminar(paciente)}
                         >
                           <Trash2 size={13} />
@@ -461,6 +471,11 @@ function PanelAdmin() {
       {/* PESTAÑA: Gestión de Citas  */}
       {/* ========================== */}
       {pestanaActiva === "citas" && <AdminCitas />}
+
+      {/* ========================== */}
+      {/* PESTAÑA: Gestión de Usuarios */}
+      {/* ========================== */}
+      {pestanaActiva === "usuarios" && <AdminUsuarios />}
     </div>
   );
 }

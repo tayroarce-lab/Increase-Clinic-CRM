@@ -4,8 +4,9 @@
  * Los datos se obtienen del contexto de autenticación (no del servidor directamente).
  */
 
-import { useAutenticacion } from "../context/ContextoAutenticacion";
+import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import { User, AtSign, Mail, Shield } from "lucide-react";
+import "../../styles/userStyles/Perfil.css";
 
 function Perfil() {
   const { usuario } = useAutenticacion();
@@ -13,58 +14,58 @@ function Perfil() {
   return (
     <div id="perfilCliente" className="perfilCliente">
       {/* Encabezado de la sección */}
-      <div className="perfilCliente__encabezado">
-        <h1 className="perfilCliente__titulo">Mi Perfil</h1>
-        <p className="perfilCliente__subtitulo">Información personal</p>
+      <div className="perfilClienteEncabezado">
+        <h1 className="perfilClienteTitulo">Mi Perfil</h1>
+        <p className="perfilClienteSubtitulo">Información personal</p>
       </div>
 
       {/* Tarjeta de perfil */}
-      <div className="perfilCliente__tarjeta">
+      <div className="perfilClienteTarjeta">
         {/* Avatar del usuario con icono profesional */}
-        <div className="perfilCliente__avatar">
+        <div className="perfilClienteAvatar">
           <User size={48} strokeWidth={1.5} color="white" />
         </div>
 
         {/* Datos del usuario */}
-        <div className="perfilCliente__datos">
+        <div className="perfilClienteDatos">
           {/* Nombre completo */}
-          <div className="perfilCliente__campo">
-            <span className="perfilCliente__etiqueta">
+          <div className="perfilClienteCampo">
+            <span className="perfilClienteEtiqueta">
               <User size={13} />
               Nombre Completo
             </span>
-            <span className="perfilCliente__valor">
+            <span className="perfilClienteValor">
               {usuario.nombreCompleto || "Sin especificar"}
             </span>
           </div>
 
           {/* Nombre de usuario */}
-          <div className="perfilCliente__campo">
-            <span className="perfilCliente__etiqueta">
+          <div className="perfilClienteCampo">
+            <span className="perfilClienteEtiqueta">
               <AtSign size={13} />
               Usuario
             </span>
-            <span className="perfilCliente__valor">{usuario.nombreUsuario}</span>
+            <span className="perfilClienteValor">{usuario.nombreUsuario}</span>
           </div>
 
           {/* Correo electrónico */}
-          <div className="perfilCliente__campo">
-            <span className="perfilCliente__etiqueta">
+          <div className="perfilClienteCampo">
+            <span className="perfilClienteEtiqueta">
               <Mail size={13} />
               Correo Electrónico
             </span>
-            <span className="perfilCliente__valor">
+            <span className="perfilClienteValor">
               {usuario.correo || "Sin especificar"}
             </span>
           </div>
 
           {/* Rol del usuario */}
-          <div className="perfilCliente__campo">
-            <span className="perfilCliente__etiqueta">
+          <div className="perfilClienteCampo">
+            <span className="perfilClienteEtiqueta">
               <Shield size={13} />
               Rol
             </span>
-            <span className="perfilCliente__valor perfilCliente__valor--rol">
+            <span className="perfilClienteValor perfilClienteValorRol">
               {usuario.rol === "admin" ? "Administrador" : "Cliente"}
             </span>
           </div>

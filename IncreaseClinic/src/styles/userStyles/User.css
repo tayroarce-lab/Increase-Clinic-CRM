@@ -1,0 +1,426 @@
+/* ===================================
+   IncreaseClinic - Estilos Usuario / Cliente
+   =================================== */
+
+/* --- Páginas de Autenticación (Login / Registro) --- */
+.paginaAutenticacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+}
+
+.paginaAutenticacionTarjeta {
+  background: var(--colorFondoTarjeta);
+  border: 1px solid var(--colorBorde);
+  border-radius: var(--radioRedondeoGrande);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--sombraTarjeta);
+  animation: aparecerDesdeAbajo 0.45s ease-out;
+}
+
+.paginaAutenticacionEncabezado {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.paginaAutenticacionIconoTitulo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  color: var(--colorPrimario);
+}
+
+.paginaAutenticacionTitulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--colorPrimario);
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.03em;
+}
+
+.paginaAutenticacionSubtitulo {
+  font-size: 1rem;
+  color: var(--colorTextoSecundario);
+  font-weight: 400;
+}
+
+.paginaAutenticacionEnlace {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--colorTextoSecundario);
+}
+
+/* --- Perfil Cliente --- */
+.perfilCliente {
+  animation: aparecerDesdeAbajo 0.45s ease-out;
+}
+
+.perfilClienteEncabezado {
+  margin-bottom: 1.5rem;
+}
+
+.perfilClienteTitulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--colorTexto);
+  letter-spacing: -0.03em;
+}
+
+.perfilClienteSubtitulo {
+  color: var(--colorTextoSecundario);
+  margin-top: 0.2rem;
+}
+
+.perfilClienteTarjeta {
+  background: var(--colorFondoTarjeta);
+  border: 1px solid var(--colorBorde);
+  border-radius: var(--radioRedondeoGrande);
+  padding: 3rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.perfilClienteTarjeta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--colorPrimario);
+}
+
+.perfilClienteAvatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--colorPrimario), var(--colorPrimarioClaro));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+}
+
+.perfilClienteAvatarIcono {
+  font-size: 2.8rem;
+}
+
+.perfilClienteDatos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  flex: 1;
+}
+
+.perfilClienteCampo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.perfilClienteEtiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--colorTextoTenue);
+}
+
+.perfilClienteValor {
+  font-size: 1.05rem;
+  color: var(--colorTexto);
+  font-weight: 500;
+}
+
+.perfilClienteValorRol {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  background: var(--colorPrimarioSuave);
+  color: var(--colorPrimario);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+/* --- Citas Cliente --- */
+.citasCliente {
+  animation: aparecerDesdeAbajo 0.45s ease-out;
+}
+
+.citasClienteEncabezado {
+  margin-bottom: 1.5rem;
+}
+
+.citasClienteTitulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--colorTexto);
+  letter-spacing: -0.03em;
+}
+
+.citasClienteSubtitulo {
+  color: var(--colorTextoSecundario);
+  margin-top: 0.2rem;
+}
+
+.citasClienteAcciones {
+  margin-bottom: 1.5rem;
+}
+
+.citasClienteFormularioContenedor {
+  background: var(--colorFondoTarjeta);
+  border: 1px solid var(--colorBorde);
+  border-radius: var(--radioRedondeoGrande);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--sombraTarjeta);
+  animation: aparecerDesdeAbajo 0.35s ease-out;
+}
+
+.citasClienteFormularioTitulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  color: var(--colorTexto);
+}
+
+.citasClienteLista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.citasClienteVacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--colorFondoTarjeta);
+  border: 1.5px dashed var(--colorBorde);
+  border-radius: var(--radioRedondeoGrande);
+  color: var(--colorTextoTenue);
+}
+
+.citasClienteVacio svg {
+  color: var(--colorTextoTenue);
+  opacity: 0.6;
+}
+
+.citasClienteTarjeta {
+  background: var(--colorFondoTarjeta);
+  border: 1px solid var(--colorBorde);
+  border-radius: var(--radioRedondeo);
+  padding: 1.2rem 1.5rem;
+  box-shadow: var(--sombra);
+  transition: var(--transicion);
+}
+
+.citasClienteTarjeta:hover {
+  border-color: var(--colorBordeHover);
+  box-shadow: var(--sombraHover);
+}
+
+.citasClienteTarjetaEncabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.citasClienteTarjetaFecha {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--colorTextoSecundario);
+  font-weight: 600;
+}
+
+.citasClienteTarjetaMotivo {
+  font-size: 0.95rem;
+  color: var(--colorTextoSecundario);
+  margin-bottom: 0.7rem;
+}
+
+.citasClienteTarjetaCuerpo strong {
+  color: var(--colorTexto);
+}
+
+.citasClienteTarjetaAcciones {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* --- Landing Page / Inicio --- */
+.paginaInicio {
+  animation: aparecerOpacidad 0.8s ease-out;
+}
+
+.hero {
+  padding: 6rem 2rem;
+  text-align: center;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.05) 0%, transparent 50%),
+    var(--colorFondoTarjeta);
+  border-radius: var(--radioRedondeoGrande);
+  margin-bottom: 4rem;
+  border: 1px solid var(--colorBorde);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroIconoPrincipal {
+  color: var(--colorPrimario);
+  margin-bottom: 1.5rem;
+  display: inline-flex;
+  animation: pulsoSuave 3s infinite ease-in-out;
+}
+
+@keyframes pulsoSuave {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.heroTitulo {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  color: var(--colorPrimario);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.04em;
+}
+
+.heroDescripcion {
+  font-size: 1.25rem;
+  color: var(--colorTextoSecundario);
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroAcciones {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.servicios {
+  padding: 4rem 1rem;
+}
+
+.serviciosTitulo {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 4rem;
+  color: var(--colorTexto);
+  letter-spacing: -0.02em;
+}
+
+.serviciosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.servicio-card {
+  background: var(--colorFondoTarjeta);
+  padding: 3.5rem 2.5rem;
+  border-radius: var(--radioRedondeoGrande);
+  border: 1px solid var(--colorBorde);
+  transition: var(--transicion);
+  text-align: center;
+  box-shadow: var(--sombraTarjeta);
+}
+
+.servicio-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--colorPrimario);
+  box-shadow: var(--sombraHover);
+}
+
+.servicio-cardIcono {
+  font-size: 3.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  color: var(--colorPrimario);
+}
+
+.servicio-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--colorPrimario);
+}
+
+.servicio-card p {
+  color: var(--colorTextoSecundario);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* --- Responsive Usuario --- */
+@media (max-width: 768px) {
+  .paginaAutenticacionTarjeta {
+    padding: 1.8rem;
+  }
+
+  .perfilClienteTarjeta {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .perfilClienteTarjeta::before {
+    width: 100%;
+    height: 4px;
+  }
+
+  .perfilClienteDatos {
+    align-items: center;
+  }
+
+  .perfilClienteEtiqueta {
+    justify-content: center;
+  }
+
+  .citasClienteTarjetaEncabezado {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .citasClienteTarjetaAcciones {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .citasClienteTarjetaAcciones .botonAccionEliminar {
+    width: 100%;
+    justify-content: center;
+    padding: 0.65rem;
+  }
+}

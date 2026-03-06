@@ -7,9 +7,10 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAutenticacion } from "../context/ContextoAutenticacion";
+import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import { HeartPulse, Mail, Lock, LogIn, AlertCircle, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
+import "../../styles/userStyles/Login.css";
 
 function Login() {
   // --- Estados del formulario ---
@@ -85,14 +86,14 @@ function Login() {
 
   return (
     <div id="paginaLogin" className="paginaAutenticacion">
-      <div className="paginaAutenticacion__tarjeta">
+      <div className="paginaAutenticacionTarjeta">
         {/* Encabezado del formulario con icono */}
-        <div className="paginaAutenticacion__encabezado">
-          <div className="paginaAutenticacion__iconoTitulo">
+        <div className="paginaAutenticacionEncabezado">
+          <div className="paginaAutenticacionIconoTitulo">
             <HeartPulse size={32} strokeWidth={2} />
           </div>
-          <h1 className="paginaAutenticacion__titulo">IncreaseClinic</h1>
-          <p className="paginaAutenticacion__subtitulo">Iniciar Sesión</p>
+          <h1 className="paginaAutenticacionTitulo">IncreaseClinic</h1>
+          <p className="paginaAutenticacionSubtitulo">Iniciar Sesión</p>
         </div>
 
         {/* Mensaje de error */}
@@ -104,15 +105,15 @@ function Login() {
         )}
 
         {/* Campo: Correo electrónico */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoCorreo" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoCorreo" className="formularioEtiqueta">
             <Mail size={14} />
             <span>Correo</span>
           </label>
           <input
             id="campoCorreo"
             type="email"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Ingresa tu correo"
             value={correo}
             onChange={(e) => setCorreo(e.target.value)}
@@ -121,15 +122,15 @@ function Login() {
         </div>
 
         {/* Campo: Contraseña */}
-        <div className="formulario__grupo">
-          <label htmlFor="campoContrasena" className="formulario__etiqueta">
+        <div className="formularioGrupo">
+          <label htmlFor="campoContrasena" className="formularioEtiqueta">
             <Lock size={14} />
             <span>Contraseña</span>
           </label>
           <input
             id="campoContrasena"
             type="password"
-            className="formulario__campo"
+            className="formularioCampo"
             placeholder="Ingresa tu contraseña"
             value={contrasena}
             onChange={(e) => setContrasena(e.target.value)}
@@ -141,7 +142,7 @@ function Login() {
         <button
           id="botonLogin"
           type="button"
-          className="formulario__boton formulario__boton--primario"
+          className="formularioBoton formularioBotonPrimario"
           disabled={estaCargando}
           onClick={manejarEnvio}
         >
@@ -159,7 +160,7 @@ function Login() {
         </button>
 
         {/* Enlace al registro */}
-        <p className="paginaAutenticacion__enlace">
+        <p className="paginaAutenticacionEnlace">
           ¿No tienes cuenta?{" "}
           <Link to="/registro">Regístrate aquí</Link>
         </p>

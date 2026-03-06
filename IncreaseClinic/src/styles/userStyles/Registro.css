@@ -1,0 +1,58 @@
+/* --- Páginas de Autenticación (Login / Registro) --- */
+.paginaAutenticacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+}
+
+.paginaAutenticacionTarjeta {
+  background: var(--colorFondoTarjeta);
+  border: 1px solid var(--colorBorde);
+  border-radius: var(--radioRedondeoGrande);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--sombraTarjeta);
+  animation: aparecerDesdeAbajo 0.45s ease-out;
+}
+
+.paginaAutenticacionEncabezado {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.paginaAutenticacionIconoTitulo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  color: var(--colorPrimario);
+}
+
+.paginaAutenticacionTitulo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--colorPrimario);
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.03em;
+}
+
+.paginaAutenticacionSubtitulo {
+  font-size: 1rem;
+  color: var(--colorTextoSecundario);
+  font-weight: 400;
+}
+
+.paginaAutenticacionEnlace {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--colorTextoSecundario);
+}
+
+@media (max-width: 768px) {
+  .paginaAutenticacionTarjeta {
+    padding: 1.8rem;
+  }
+}

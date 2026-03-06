@@ -6,7 +6,7 @@
 
 import { Navigate } from "react-router-dom";
 import { useAutenticacion } from "../context/ContextoAutenticacion";
-import Registro from "../components/Registro";
+import Registro from "../components/user/Registro";
 
 export default function PaginaRegistro() {
   const { usuario } = useAutenticacion();

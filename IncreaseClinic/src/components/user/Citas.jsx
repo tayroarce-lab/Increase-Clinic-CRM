@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useAutenticacion } from "../context/ContextoAutenticacion";
-import { obtenerCitasPorUsuario, crearCita, eliminarCita } from "../services/ServicioCitas";
-import { obtenerPacientes, crearPaciente } from "../services/ServicioPacientes";
-import IndicadorCarga from "./IndicadorCarga";
+import { useAutenticacion } from "../../context/ContextoAutenticacion";
+import { obtenerCitasPorUsuario, crearCita, eliminarCita } from "../../services/ServicioCitas";
+import { obtenerPacientes, crearPaciente } from "../../services/ServicioPacientes";
+import IndicadorCarga from "../common/IndicadorCarga";
 import { CalendarPlus, X, CalendarDays, Clock, FileText, AlertCircle, ClipboardList, XCircle } from "lucide-react";
 import Swal from "sweetalert2";
+import "../../styles/userStyles/Citas.css";
 
 /**
  * Citas - Componente para que el cliente visualice, solicite y cancele sus citas.
@@ -197,9 +198,9 @@ function Citas() {
    */
   function resolverEstiloEstadoColor(estadoCita) {
     const mapaEstilosEstado = {
-      pendiente: "estadoCita--pendiente",
-      confirmada: "estadoCita--confirmada",
-      cancelada: "estadoCita--cancelada",
+      pendiente: "estadoCitaPendiente",
+      confirmada: "estadoCitaConfirmada",
+      cancelada: "estadoCitaCancelada",
     };
     return mapaEstilosEstado[estadoCita] || "";
   }
@@ -213,9 +214,9 @@ function Citas() {
   return (
     <div id="seccionCitasCliente" className="citasCliente">
       {/* Encabezado de la sección */}
-      <div className="citasCliente__encabezado">
-        <h1 className="citasCliente__titulo">Mis Citas</h1>
-        <p className="citasCliente__subtitulo">Administra tu agenda de salud con IncreaseClinic</p>
+      <div className="citasClienteEncabezado">
+        <h1 className="citasClienteTitulo">Mis Citas</h1>
+        <p className="citasClienteSubtitulo">Administra tu agenda de salud con IncreaseClinic</p>
       </div>
 
       {/* Mensaje de error global */}
@@ -227,10 +228,10 @@ function Citas() {
       )}
 
       {/* Botón para mostrar/ocultar el formulario de nueva cita */}
-      <div className="citasCliente__acciones">
+      <div className="citasClienteAcciones">
         <button
           id="botonAgendarCita"
-          className="formulario__boton formulario__boton--primario"
+          className="formularioBoton formularioBotonPrimario"
           onClick={() => setMostrarFormularioNuevaCita(!mostrarFormularioNuevaCita)}
         >
           {mostrarFormularioNuevaCita ? (
@@ -249,8 +250,8 @@ function Citas() {
 
       {/* Formulario de solicitud de nueva cita */}
       {mostrarFormularioNuevaCita && (
-        <div className="citasCliente__formularioContenedor">
-          <h2 className="citasCliente__formularioTitulo">Datos de Nueva Cita</h2>
+        <div className="citasClienteFormularioContenedor">
+          <h2 className="citasClienteFormularioTitulo">Datos de Nueva Cita</h2>
 
           {errorValidacionCita && (
             <div className="mensajeError">
@@ -261,9 +262,9 @@ function Citas() {
 
           <div id="cuerpoFormularioCita" className="formulario">
             {/* Fila: Fecha + Hora */}
-            <div className="formulario__fila">
-              <div className="formulario__grupo">
-                <label htmlFor="inputFechaCita" className="formulario__etiqueta">
+            <div className="formularioFila">
+              <div className="formularioGrupo">
+                <label htmlFor="inputFechaCita" className="formularioEtiqueta">
                   <CalendarDays size={14} />
                   <span>Fecha Deseada</span>
                 </label>
@@ -271,14 +272,14 @@ function Citas() {
                   id="inputFechaCita"
                   type="date"
                   name="fechaCita"
-                  className="formulario__campo"
+                  className="formularioCampo"
                   value={datosNuevaCita.fechaCita}
                   onChange={manejarCambioCampo}
                 />
               </div>
 
-              <div className="formulario__grupo">
-                <label htmlFor="inputHoraCita" className="formulario__etiqueta">
+              <div className="formularioGrupo">
+                <label htmlFor="inputHoraCita" className="formularioEtiqueta">
                   <Clock size={14} />
                   <span>Hora Sugerida</span>
                 </label>
@@ -286,7 +287,7 @@ function Citas() {
                   id="inputHoraCita"
                   type="time"
                   name="horaCita"
-                  className="formulario__campo"
+                  className="formularioCampo"
                   value={datosNuevaCita.horaCita}
                   onChange={manejarCambioCampo}
                 />
@@ -294,15 +295,15 @@ function Citas() {
             </div>
 
             {/* Campo: Motivo de la visita */}
-            <div className="formulario__grupo">
-              <label htmlFor="inputAreaMotivo" className="formulario__etiqueta">
+            <div className="formularioGrupo">
+              <label htmlFor="inputAreaMotivo" className="formularioEtiqueta">
                 <FileText size={14} />
                 <span>¿Por qué nos visitas? (Motivo)</span>
               </label>
               <textarea
                 id="inputAreaMotivo"
                 name="motivoConsulta"
-                className="formulario__campo formulario__campo--area"
+                className="formularioCampo formularioCampoArea"
                 placeholder="Por favor, describe los síntomas o el propósito de tu visita..."
                 value={datosNuevaCita.motivoConsulta}
                 onChange={manejarCambioCampo}
@@ -314,7 +315,7 @@ function Citas() {
             <button
               id="botonConfirmarCita"
               type="button"
-              className="formulario__boton formulario__boton--primario"
+              className="formularioBoton formularioBotonPrimario"
               onClick={enviarSolicitudCita}
             >
               <CalendarPlus size={18} />
@@ -325,22 +326,22 @@ function Citas() {
       )}
 
       {/* Historial de citas del usuario */}
-      <div className="citasCliente__lista">
+      <div className="citasClienteLista">
         {listaCitas.length === 0 ? (
-          <div className="citasCliente__vacio">
+          <div className="citasClienteVacio">
             <ClipboardList size={40} strokeWidth={1.5} />
             <p>Aún no posees citas programadas.</p>
             <p>Puedes empezar agendando una utilizando el botón superior.</p>
           </div>
         ) : (
           listaCitas.map((registroCita) => (
-            <div key={registroCita.id} className="citasCliente__tarjeta">
+            <div key={registroCita.id} className="citasClienteTarjeta">
               {/* Encabezado: Estado + Fecha/Hora */}
-              <div className="citasCliente__tarjetaEncabezado">
+              <div className="citasClienteTarjetaEncabezado">
                 <span className={`estadoCita ${resolverEstiloEstadoColor(registroCita.estado)}`}>
                   {registroCita.estado.charAt(0).toUpperCase() + registroCita.estado.slice(1)}
                 </span>
-                <span className="citasCliente__tarjetaFecha">
+                <span className="citasClienteTarjetaFecha">
                   <CalendarDays size={14} />
                   {registroCita.fecha}
                   <Clock size={14} style={{ marginLeft: "0.5rem" }} />
@@ -348,16 +349,16 @@ function Citas() {
                 </span>
               </div>
               {/* Cuerpo: Motivo */}
-              <div className="citasCliente__tarjetaCuerpo">
-                <p className="citasCliente__tarjetaMotivo">
+              <div className="citasClienteTarjetaCuerpo">
+                <p className="citasClienteTarjetaMotivo">
                   <strong>Detalle de visita:</strong> {registroCita.motivo}
                 </p>
               </div>
               {/* Acciones: botón para revocar la cita */}
-              <div className="citasCliente__tarjetaAcciones">
+              <div className="citasClienteTarjetaAcciones">
                 <button
                   id={`botonCancelar-${registroCita.id}`}
-                  className="botonAccion botonAccion--eliminar"
+                  className="botonAccion botonAccionEliminar"
                   onClick={() => confirmarEliminacionCita(registroCita)}
                 >
                   <XCircle size={14} />

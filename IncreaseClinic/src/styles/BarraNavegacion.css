@@ -1,0 +1,141 @@
+/* --- Barra de Navegación --- */
+.barraNavegacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+}
+
+.barraNavegacionLogo a {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--colorPrimario);
+  letter-spacing: -0.03em;
+}
+
+.barraNavegacionLogo a:hover {
+  color: var(--colorPrimarioHover);
+}
+
+.barraNavegacionEnlaces {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.barraNavegacionEnlace {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--colorTextoSecundario);
+  transition: var(--transicion);
+}
+
+.barraNavegacionEnlace:hover {
+  background: var(--colorPrimarioSuave);
+  color: var(--colorPrimario);
+}
+
+.barraNavegacionEnlaceResaltado {
+  background: var(--colorPrimario);
+  color: white !important;
+  padding: 0.5rem 1.2rem;
+}
+
+.barraNavegacionEnlaceResaltado:hover {
+  background: var(--colorPrimarioHover);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+.barraNavegacionUsuario {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.barraNavegacionNombreUsuario {
+  font-size: 0.85rem;
+  color: var(--colorTextoSecundario);
+  font-weight: 500;
+}
+
+.barraNavegacionBotonSalir {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  color: var(--colorError);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transicion);
+  font-family: var(--fuentePrincipal);
+}
+
+.barraNavegacionBotonSalir:hover {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: var(--colorError);
+}
+
+@media (max-width: 768px) {
+  .barraNavegacion {
+    flex-direction: column;
+    height: auto;
+    padding: 1.25rem 1rem;
+    gap: 1.25rem;
+  }
+
+  .barraNavegacionEnlaces {
+    width: 100%;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .barraNavegacionUsuario {
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid var(--colorBorde);
+    padding-top: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .barraNavegacionNombreUsuario {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0.2rem;
+  }
+
+  .barraNavegacionBotonSalir {
+    width: 100%;
+    justify-content: center;
+    padding: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .barraNavegacionNombreUsuario {
+    display: none;
+  }
+}

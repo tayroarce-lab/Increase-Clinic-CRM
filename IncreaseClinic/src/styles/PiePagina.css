@@ -1,0 +1,115 @@
+/* --- Pie de Página --- */
+.footer {
+  background: var(--colorFondoTarjeta);
+  border-top: 1px solid var(--colorBorde);
+  padding: 5rem 0 2rem;
+  margin-top: 4rem;
+}
+
+.footerContenido {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 4rem;
+  padding: 0 2rem;
+}
+
+.footerColumna {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--colorPrimario);
+}
+
+.footerDescripcion {
+  color: var(--colorTextoSecundario);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.footerRedes {
+  display: flex;
+  gap: 1rem;
+}
+
+.footerRedSocial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--colorPrimarioSuave);
+  color: var(--colorPrimario);
+  border-radius: 50%;
+  transition: var(--transicion);
+}
+
+.footerRedSocial:hover {
+  background: var(--colorPrimario);
+  color: white;
+  transform: translateY(-3px);
+}
+
+.footerTituloColumna {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--colorTexto);
+  margin-bottom: 0.5rem;
+}
+
+.footerLista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footerLista li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--colorTextoSecundario);
+  font-size: 0.9rem;
+}
+
+.footerInferior {
+  max-width: 1200px;
+  margin: 3rem auto 0;
+  padding: 2rem 2rem 0;
+  border-top: 1px solid var(--colorBorde);
+  text-align: center;
+  color: var(--colorTextoTenue);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 992px) {
+  .footerContenido {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .footerContenido {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    text-align: center;
+  }
+
+  .footerColumna {
+    align-items: center;
+  }
+
+  .footerRedes {
+    justify-content: center;
+  }
+}

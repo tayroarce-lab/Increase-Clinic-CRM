@@ -1,4 +1,5 @@
 import { CalendarCheck, Users, Stethoscope } from "lucide-react";
+import "../../../styles/userStyles/ServiciosInicio.css";
 
 /**
  * ServiciosInicio - Sección que muestra los servicios destacados de la clínica.
@@ -33,12 +34,12 @@ function ServiciosInicio() {
 
   return (
     <section className="servicios">
-      <h2 className="servicios__titulo">Nuestros Servicios</h2>
-      <div className="servicios__grid">
+      <h2 className="serviciosTitulo">Nuestros Servicios</h2>
+      <div className="serviciosGrid">
         {/* Renderizamos cada servicio dinámicamente desde el arreglo */}
         {listaServicios.map((servicio) => (
-          <div key={servicio.id} className="servicio-card">
-            <span className="servicio-card__icono">{servicio.icono}</span>
+          <div key={servicio.id} className="servicioCard">
+            <span className="servicioCardIcono">{servicio.icono}</span>
             <h3>{servicio.titulo}</h3>
             <p>{servicio.descripcion}</p>
           </div>

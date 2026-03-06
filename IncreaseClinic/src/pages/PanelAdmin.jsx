@@ -3,7 +3,7 @@
  * Solo invoca el componente Admin; no contiene HTML directo.
  */
 
-import Admin from "../components/Admin";
+import Admin from "../components/admin/Admin";
 
 export default function PanelAdmin() {
   return <Admin />;

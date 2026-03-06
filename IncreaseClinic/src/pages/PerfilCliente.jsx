@@ -3,7 +3,7 @@
  * Solo invoca el componente Perfil; no contiene HTML directo.
  */
 
-import Perfil from "../components/Perfil";
+import Perfil from "../components/user/Perfil";
 
 export default function PerfilCliente() {
   return <Perfil />;
