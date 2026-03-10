@@ -9,7 +9,7 @@
 import { Loader2 } from "lucide-react";
 import "../../styles/IndicadorCarga.css";
 
-function IndicadorCarga({ mensaje = "Cargando..." }) {
+function IndicadorCarga({ mensaje = "Cargando..." }: { mensaje?: string }) {
   return (
     <div id="indicadorCarga" className="indicadorCarga">
       <Loader2 size={36} className="iconoGirando" strokeWidth={2} />

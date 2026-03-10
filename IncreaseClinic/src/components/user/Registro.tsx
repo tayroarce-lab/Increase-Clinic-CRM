@@ -71,7 +71,6 @@ function Registro() {
         contrasena,
         nombreCompleto,
         correo,
-        rol: "cliente",
       });
 
       await Swal.fire({
@@ -83,14 +82,15 @@ function Registro() {
       });
 
       navegar("/citas");
-    } catch (errorRegistro: any) {
+    } catch (errorRegistro) {
+      const msg = errorRegistro instanceof Error ? errorRegistro.message : "Error desconocido";
       Swal.fire({
         icon: "error",
         title: "Error al registrar",
-        text: errorRegistro.message || "No se pudo crear la cuenta",
+        text: msg || "No se pudo crear la cuenta",
         confirmButtonColor: "#2563EB",
       });
-      setMensajeError(errorRegistro.message || "Error al registrar usuario");
+      setMensajeError(msg || "Error al registrar usuario");
     } finally {
       setEstaCargando(false);
     }

@@ -1,5 +1,15 @@
+export interface Cita {
+  id?: string;
+  nombrePaciente: string;
+  fecha: string;
+  hora: string;
+  motivo: string;
+  estado: "pendiente" | "confirmada" | "cancelada";
+  idUsuario?: string;
+}
+
 //PATCH
-async function patchCitas(cita: any, id: string) {
+async function patchCitas(cita: Partial<Cita>, id: string): Promise<Cita | undefined> {
     try {
         const respuesta = await fetch("http://localhost:3001/citas/" + id, {
             method: "PATCH",
@@ -16,29 +26,28 @@ async function patchCitas(cita: any, id: string) {
 }
 
 //DELETE
-async function deleteCitas(id: string) {
+async function deleteCitas(id: string): Promise<void> {
     try {
-        const respuesta = await fetch("http://localhost:3001/citas/" + id, {
+        await fetch("http://localhost:3001/citas/" + id, {
             method: "DELETE",
         })
-        const datosCitas = await respuesta.json();
-        return datosCitas;
     } catch (error) {
         console.error("Error al Eliminar el registro", error);
     }
 }
 
-async function getCitas() {
+async function getCitas(): Promise<Cita[]> {
     try {
         const respuesta = await fetch("http://localhost:3001/citas")
         const datos = await respuesta.json();
         return datos;
     } catch (error) {
         console.error("Error al obtener las citas", error);
+        return [];
     }
 }
 
-async function postCitas(cita: any) {
+async function postCitas(cita: Cita): Promise<Cita | undefined> {
     try {
         const respuesta = await fetch("http://localhost:3001/citas", {
             method: "POST",

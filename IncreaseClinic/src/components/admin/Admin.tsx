@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import ServicioPacientes from "../../services/ServicioPacientes";
 import IndicadorCarga from "../common/IndicadorCarga";
 import AdminCitas from "./AdminCitas";
@@ -6,16 +6,7 @@ import AdminUsuarios from "./AdminUsuarios";
 import { Users, CalendarDays, UserPlus, AlertCircle, Pencil, Trash2, User, Phone, Mail, FileText, Save, X, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/Admin.css";
-
-interface Paciente {
-  id?: string;
-  nombre: string;
-  edad: number | string;
-  telefono: string;
-  correo: string;
-  diagnostico: string;
-  fechaRegistro?: string;
-}
+import { Paciente } from "../../services/ServicioPacientes";
 
 // Esta es la pantalla principal para el administrador.
 function PanelAdmin() {
@@ -53,8 +44,9 @@ function PanelAdmin() {
       setMensajeError("");
       const datos = await ServicioPacientes.getPacientes();
       setPacientes(datos);
-    } catch (errorPeticion: any) {
-      setMensajeError("Error al cargar los pacientes: " + errorPeticion.message);
+    } catch (errorPeticion) {
+      const msg = errorPeticion instanceof Error ? errorPeticion.message : "Error desconocido";
+      setMensajeError("Error al cargar los pacientes: " + msg);
     } finally {
       setEstaCargando(false);
     }
@@ -110,7 +102,7 @@ function PanelAdmin() {
   }
 
   // Anota lo que vamos escribiendo en los cuadros.
-  function manejarCambio(evento: any) {
+  function manejarCambio(evento: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = evento.target;
     // Los 3 puntos '...' copian lo de antes para no borrar nada al escribir.
     setFormulario((estadoAnterior) => ({ ...estadoAnterior, [name]: value }));
@@ -122,8 +114,9 @@ function PanelAdmin() {
 
     if (!validarFormulario()) return;
 
-    const datosPaciente = {
+    const datosPaciente: Paciente = {
       ...formulario,
+      id: pacienteEditando?.id,
       edad: Number(formulario.edad),
       fechaRegistro: pacienteEditando
         ? pacienteEditando.fechaRegistro
@@ -152,14 +145,15 @@ function PanelAdmin() {
       }
       limpiarFormulario();
       await cargarPacientes();
-    } catch (errorEnvio: any) {
+    } catch (errorEnvio) {
+      const msg = errorEnvio instanceof Error ? errorEnvio.message : "Error desconocido";
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "No se pudo guardar el paciente: " + errorEnvio.message,
+        text: "No se pudo guardar el paciente: " + msg,
         confirmButtonColor: "#2563EB",
       });
-      setErrorFormulario("Error al guardar: " + errorEnvio.message);
+      setErrorFormulario("Error al guardar: " + msg);
     }
   }
 
@@ -188,11 +182,12 @@ function PanelAdmin() {
         timer: 1500,
         showConfirmButton: false,
       });
-    } catch (errorEliminacion: any) {
+    } catch (errorEliminacion) {
+      const msg = errorEliminacion instanceof Error ? errorEliminacion.message : "Error desconocido";
       Swal.fire({
         icon: "error",
         title: "Error al eliminar",
-        text: errorEliminacion.message,
+        text: msg,
         confirmButtonColor: "#2563EB",
       });
     }

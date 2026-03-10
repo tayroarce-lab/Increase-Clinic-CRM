@@ -60,14 +60,15 @@ function Login() {
       } else {
         navegar("/citas");
       }
-    } catch (errorLogin: any) {
+    } catch (errorLogin) {
+      const msg = errorLogin instanceof Error ? errorLogin.message : "Error desconocido";
       Swal.fire({
         icon: "error",
         title: "Error al iniciar sesión",
-        text: errorLogin.message || "Credenciales incorrectas",
+        text: msg || "Credenciales incorrectas",
         confirmButtonColor: "#2563EB",
       });
-      setMensajeError(errorLogin.message || "Error al iniciar sesión");
+      setMensajeError(msg || "Error al iniciar sesión");
     } finally {
       setEstaCargando(false);
     }

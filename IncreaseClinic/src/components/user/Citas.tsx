@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { useAutenticacion } from "../../context/ContextoAutenticacion";
 import ServicioCitas from "../../services/ServicioCitas";
 import ServicioPacientes from "../../services/ServicioPacientes";
@@ -6,12 +6,14 @@ import IndicadorCarga from "../common/IndicadorCarga";
 import { CalendarPlus, X, CalendarDays, Clock, FileText, AlertCircle, ClipboardList, XCircle } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/userStyles/Citas.css";
+import { Cita } from "../../services/ServicioCitas";
+import { Paciente } from "../../services/ServicioPacientes";
 
 // Aquí los clientes piden, miran o borran sus citas.
 function Citas() {
   // Aquí guardamos los datos de tus citas.
   const { usuario } = useAutenticacion();
-  const [listaCitas, setListaCitas] = useState<any[]>([]);
+  const [listaCitas, setListaCitas] = useState<Cita[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
   const [mostrarFormularioNuevaCita, setMostrarFormularioNuevaCita] = useState(false);
@@ -38,11 +40,12 @@ function Citas() {
     try {
       setEstaCargando(true);
       setMensajeError("");
-      const idUsuarioStr = String(usuario.id);
+      const idUsuarioStr = String(usuario?.id);
       const citasRecibidas = await ServicioCitas.getCitas();
-      setListaCitas(citasRecibidas.filter((cita: any) => String(cita.idUsuario) === idUsuarioStr));
-    } catch (errorPeticion: any) {
-      setMensajeError(`Hubo un error al cargar las citas: ${errorPeticion.message}`);
+      setListaCitas(citasRecibidas.filter((cita: Cita) => String(cita.idUsuario) === idUsuarioStr));
+    } catch (errorPeticion) {
+      const msg = errorPeticion instanceof Error ? errorPeticion.message : "Error desconocido";
+      setMensajeError(`Hubo un error al cargar las citas: ${msg}`);
     } finally {
       setEstaCargando(false);
     }
@@ -66,21 +69,22 @@ function Citas() {
   }
 
   // Anota lo que vas escribiendo en los cuadros.
-  function manejarCambioCampo(eventoAsociado: any) {
+  function manejarCambioCampo(eventoAsociado: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = eventoAsociado.target;
     setDatosNuevaCita((estadoAnterior) => ({ ...estadoAnterior, [name]: value }));
   }
 
   // Si eres nuevo, te anota en la lista de pacientes.
   async function validarYRegistrarComoPaciente() {
+    if (!usuario) return;
     try {
       const todosLosPacientes = await ServicioPacientes.getPacientes();
       const pacienteExistente = todosLosPacientes.find(
-        (pacienteActual: any) => pacienteActual.correo === usuario.correo
+        (pacienteActual: Paciente) => pacienteActual.correo === usuario.correo
       );
 
       if (!pacienteExistente) {
-        const nuevoPerfilPaciente = {
+        const nuevoPerfilPaciente: Paciente = {
           nombre: usuario.nombreCompleto || usuario.nombreUsuario,
           edad: 0,
           telefono: "Por definir",
@@ -90,18 +94,19 @@ function Citas() {
         };
         await ServicioPacientes.postPacientes(nuevoPerfilPaciente);
       }
-    } catch (errorValidacion: any) {
+    } catch (errorValidacion) {
       console.error("No se pudo registrar como paciente:", errorValidacion);
     }
   }
 
   // Envía tu pedido de cita al internet.
   async function enviarSolicitudCita() {
+    if (!usuario) return;
     setErrorValidacionCita("");
 
     if (!validarCamposCita()) return;
 
-    const informacionCitaNueva = {
+    const informacionCitaNueva: Cita = {
       idUsuario: String(usuario.id),
       nombrePaciente: usuario.nombreCompleto || usuario.nombreUsuario,
       fecha: datosNuevaCita.fechaCita,
@@ -125,19 +130,20 @@ function Citas() {
         timer: 2300,
         showConfirmButton: false,
       });
-    } catch (errorEnvio: any) {
+    } catch (errorEnvio) {
+      const msg = errorEnvio instanceof Error ? errorEnvio.message : "Error desconocido";
       Swal.fire({
         icon: "error",
         title: "Houston, tenemos un problema",
-        text: `Error al crear cita: ${errorEnvio.message}`,
+        text: `Error al crear cita: ${msg}`,
         confirmButtonColor: "#2563EB",
       });
-      setErrorValidacionCita(`Ocurrió un error en el servidor: ${errorEnvio.message}`);
+      setErrorValidacionCita(`Ocurrió un error en el servidor: ${msg}`);
     }
   }
 
   // Borra tu cita si ya no quieres ir.
-  async function confirmarEliminacionCita(citaSeleccionada: any) {
+  async function confirmarEliminacionCita(citaSeleccionada: Cita) {
     const alertaConfirmacion = await Swal.fire({
       icon: "warning",
       title: "¿Deseas cancelar esta cita médica?",
@@ -152,7 +158,7 @@ function Citas() {
     if (!alertaConfirmacion.isConfirmed) return;
 
     try {
-      await ServicioCitas.deleteCitas(citaSeleccionada.id);
+      await ServicioCitas.deleteCitas(citaSeleccionada.id!);
       await cargarHistorialCitas();
 
       Swal.fire({
@@ -162,11 +168,12 @@ function Citas() {
         timer: 1800,
         showConfirmButton: false,
       });
-    } catch (errorEliminacion: any) {
+    } catch (errorEliminacion) {
+      const msg = errorEliminacion instanceof Error ? errorEliminacion.message : "Error desconocido";
       Swal.fire({
         icon: "error",
         title: "No se pudo cancelar",
-        text: `Error interno: ${errorEliminacion.message}`,
+        text: `Error interno: ${msg}`,
         confirmButtonColor: "#2563EB",
       });
     }
@@ -311,7 +318,7 @@ function Citas() {
             <p>Puedes empezar agendando una utilizando el botón superior.</p>
           </div>
         ) : (
-          listaCitas.map((registroCita: any) => (
+          listaCitas.map((registroCita: Cita) => (
             <div key={registroCita.id} className="citasClienteTarjeta">
               {/* Muestra si está aceptada y cuándo es. */}
               <div className="citasClienteTarjetaEncabezado">

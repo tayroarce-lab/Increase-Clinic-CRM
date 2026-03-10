@@ -1,5 +1,15 @@
+export interface Paciente {
+  id?: string;
+  nombre: string;
+  edad: number;
+  telefono: string;
+  correo: string;
+  diagnostico: string;
+  fechaRegistro?: string;
+}
+
 //PATCH
-async function patchPacientes(paciente: any, id: string) {
+async function patchPacientes(paciente: Partial<Paciente>, id: string): Promise<Paciente | undefined> {
     try {
         const respuesta = await fetch("http://localhost:3001/pacientes/" + id, {
             method: "PATCH",
@@ -16,29 +26,28 @@ async function patchPacientes(paciente: any, id: string) {
 }
 
 //DELETE    
-async function deletePacientes(id: string) {
+async function deletePacientes(id: string): Promise<void> {
     try {
-        const respuesta = await fetch("http://localhost:3001/pacientes/" + id, {
+        await fetch("http://localhost:3001/pacientes/" + id, {
             method: "DELETE",
         })
-        const datosPacientes = await respuesta.json();
-        return datosPacientes;
     } catch (error) {
         console.error("Error al Eliminar el registro", error);
     }
 }
 
-async function getPacientes() {
+async function getPacientes(): Promise<Paciente[]> {
     try {
         const respuesta = await fetch("http://localhost:3001/pacientes")
         const datos = await respuesta.json();
         return datos;
     } catch (error) {
         console.error("Error al obtener los pacientes", error);
+        return [];
     }
 }
 
-async function postPacientes(paciente: any) {
+async function postPacientes(paciente: Paciente): Promise<Paciente | undefined> {
     try {
         const respuesta = await fetch("http://localhost:3001/pacientes", {
             method: "POST",

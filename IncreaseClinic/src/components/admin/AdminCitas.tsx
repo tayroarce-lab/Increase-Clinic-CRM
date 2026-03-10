@@ -4,11 +4,12 @@ import IndicadorCarga from "../common/IndicadorCarga";
 import { AlertCircle, CheckCircle, XCircle, RotateCcw, Trash2, CalendarDays } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/AdminCitas.css";
+import { Cita } from "../../services/ServicioCitas";
 
 // Aquí el jefe mira y cambia las citas.
 function AdminCitas() {
   // Aquí guardamos los datos de las citas.
-  const [listaCitas, setListaCitas] = useState<any[]>([]);
+  const [listaCitas, setListaCitas] = useState<Cita[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
 
@@ -35,7 +36,7 @@ function AdminCitas() {
   }
 
   // Cambia si la cita está lista, pendiente o cancelada.
-  async function cambiarEstadoCita(citaSeleccionada: any, nuevoEstado: string) {
+  async function cambiarEstadoCita(citaSeleccionada: Cita, nuevoEstado: Cita["estado"]) {
     const alertaConfirmacion = await Swal.fire({
       icon: "question",
       title: `¿Cambiar estado a "${nuevoEstado}"?`,
@@ -51,7 +52,7 @@ function AdminCitas() {
 
     try {
       const citaActualizada = { ...citaSeleccionada, estado: nuevoEstado }; // los 3 puntos "..." copian lo de antes para no borrar nada al escribir
-      await ServicioCitas.patchCitas(citaActualizada, citaSeleccionada.id);
+      await ServicioCitas.patchCitas(citaActualizada, citaSeleccionada.id!);
       await cargarTodasLasCitas();
 
       Swal.fire({
@@ -73,7 +74,7 @@ function AdminCitas() {
   }
 
   // Borra una cita para siempre si el jefe quiere.
-  async function confirmarEliminacionCita(citaSeleccionada: any) {
+  async function confirmarEliminacionCita(citaSeleccionada: Cita) {
     const alertaConfirmacion = await Swal.fire({
       icon: "warning",
       title: "¿Eliminar esta cita?",
@@ -88,7 +89,7 @@ function AdminCitas() {
     if (!alertaConfirmacion.isConfirmed) return;
 
     try {
-      await ServicioCitas.deleteCitas(citaSeleccionada.id);
+      await ServicioCitas.deleteCitas(citaSeleccionada.id!);
       await cargarTodasLasCitas();
 
       Swal.fire({

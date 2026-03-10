@@ -1,17 +1,17 @@
-// Aquí el jefe puede crear otros jefes o borrar usuarios.
 import { useState, useEffect, ChangeEvent } from "react";
 import ServicioUsuarios from "../../services/ServicioUsuarios";
 import { Users, UserPlus, Shield, Trash2, Mail, Lock, UserCircle, AlertCircle, Save, X, Search, Pencil } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/AdminUsuarios.css";
+import { Usuario } from "../../context/ContextoAutenticacion";
 
 function AdminUsuarios() {
-  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [errorFormulario, setErrorFormulario] = useState("");
   const [busqueda, setBusqueda] = useState("");
-  const [usuarioEditando, setUsuarioEditando] = useState<any>(null);
+  const [usuarioEditando, setUsuarioEditando] = useState<Usuario | null>(null);
 
   const CORREO_ADMIN_PRINCIPAL = "admin@increaseclinic.com";
 
@@ -21,7 +21,7 @@ function AdminUsuarios() {
     contrasena: "",
     nombreCompleto: "",
     correo: "",
-    rol: "admin"
+    rol: "admin" as "admin" | "cliente"
   });
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function AdminUsuarios() {
   }
 
   // Abre la ventana para cambiar datos de alguien.
-  function abrirFormularioEditar(usuarioSelec: any) {
+  function abrirFormularioEditar(usuarioSelec: Usuario) {
     setFormulario({
       nombreUsuario: usuarioSelec.nombreUsuario || "",
       contrasena: "", // Se deja vacía por si no la quiere cambiar.
@@ -93,32 +93,33 @@ function AdminUsuarios() {
     try {
       const todos = await ServicioUsuarios.getUser();
 
-      const nombreOcupado = todos.find((u: any) => u.nombreUsuario === formulario.nombreUsuario && u.id !== usuarioEditando?.id);
+      const nombreOcupado = todos.find((u: Usuario) => u.nombreUsuario === formulario.nombreUsuario && u.id !== usuarioEditando?.id);
       if (nombreOcupado) throw new Error("Ese nombre de usuario ya está usado.");
 
       if (usuarioEditando) {
         const { contrasena, ...datosSinContrasena } = formulario;
         const datosEnviar = contrasena ? formulario : datosSinContrasena;
 
-        await ServicioUsuarios.patchUsuarios(datosEnviar, usuarioEditando.id);
+        await ServicioUsuarios.patchUsuarios(datosEnviar as Partial<Usuario>, usuarioEditando.id!);
         Swal.fire({ icon: "success", title: "Actualizado", text: "Datos guardados.", timer: 2000, showConfirmButton: false });
       } else {
-        const correoOcupado = todos.find((u: any) => u.correo === formulario.correo);
+        const correoOcupado = todos.find((u: Usuario) => u.correo === formulario.correo);
         if (correoOcupado) throw new Error("Ese correo ya está registrado.");
 
-        await ServicioUsuarios.postUser({ ...formulario });
+        await ServicioUsuarios.postUser({ ...formulario } as Usuario);
         Swal.fire({ icon: "success", title: "Creado", text: "Usuario creado.", timer: 2000, showConfirmButton: false });
       }
 
       limpiarFormulario();
       await cargarUsuarios();
-    } catch (error: any) {
-      setErrorFormulario(error.message);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Error desconocido";
+      setErrorFormulario(msg);
     }
   }
 
   // Borra a un usuario si el jefe quiere, pero no al jefe principal.
-  async function manejarEliminar(usuarioSeleccionado: any) {
+  async function manejarEliminar(usuarioSeleccionado: Usuario) {
     if (usuarioSeleccionado.correo === CORREO_ADMIN_PRINCIPAL) {
       Swal.fire({
         icon: "error",
@@ -143,7 +144,7 @@ function AdminUsuarios() {
     if (!resultado.isConfirmed) return;
 
     try {
-      await ServicioUsuarios.deleteUsuarios(usuarioSeleccionado.id);
+      await ServicioUsuarios.deleteUsuarios(usuarioSeleccionado.id!);
       await cargarUsuarios();
       Swal.fire("Eliminado", "El usuario ha sido removido del sistema.", "success");
     } catch (error) {
@@ -152,7 +153,7 @@ function AdminUsuarios() {
   }
 
   // Busca usuarios por su nombre o correo.
-  const usuariosFiltrados = usuarios.filter((u: any) =>
+  const usuariosFiltrados = usuarios.filter((u: Usuario) =>
     u.nombreUsuario.toLowerCase().includes(busqueda.toLowerCase()) ||
     u.correo.toLowerCase().includes(busqueda.toLowerCase())
   );

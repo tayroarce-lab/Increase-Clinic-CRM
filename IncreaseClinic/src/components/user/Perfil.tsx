@@ -7,6 +7,10 @@ import "../../styles/userStyles/Perfil.css";
 function Perfil() {
   const { usuario } = useAutenticacion();
 
+  if (!usuario) {
+    return null;
+  }
+
   return (
     <div id="perfilCliente" className="perfilCliente">
       {/* El título de arriba. */}
