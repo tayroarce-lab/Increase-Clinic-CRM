@@ -9,9 +9,12 @@ import { useAutenticacion } from "../context/ContextoAutenticacion";
 import Registro from "../components/user/Registro";
 
 export default function PaginaRegistro() {
-  const { usuario } = useAutenticacion();
+  const { usuario, cargando } = useAutenticacion();
 
-  // Si ya inició sesión, redirigir al inicio
+  if (cargando) {
+    return <div className="indicadorCarga">Cargando...</div>;
+  }
+
   if (usuario) {
     return <Navigate to="/" replace />;
   }

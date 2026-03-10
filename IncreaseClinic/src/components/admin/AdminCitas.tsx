@@ -8,7 +8,7 @@ import "../../styles/adminStyles/AdminCitas.css";
 // Aquí el jefe mira y cambia las citas.
 function AdminCitas() {
   // Aquí guardamos los datos de las citas.
-  const [listaCitas, setListaCitas] = useState([]);
+  const [listaCitas, setListaCitas] = useState<any[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
 
@@ -19,7 +19,7 @@ function AdminCitas() {
 
   // Estas cajitas de código mueven los datos de las citas.
 
-// Trae todas las citas del internet.
+  // Trae todas las citas del internet.
   async function cargarTodasLasCitas() {
     try {
       setEstaCargando(true);
@@ -27,14 +27,15 @@ function AdminCitas() {
       const citasRecibidas = await ServicioCitas.getCitas();
       setListaCitas(citasRecibidas);
     } catch (errorPeticion) {
-      setMensajeError(`Error al cargar las citas: ${errorPeticion.message}`);
+      const errorMessage = errorPeticion instanceof Error ? errorPeticion.message : 'Error desconocido';
+      setMensajeError(`Error al cargar las citas: ${errorMessage}`);
     } finally {
       setEstaCargando(false);
     }
   }
 
-// Cambia si la cita está lista, pendiente o cancelada.
-  async function cambiarEstadoCita(citaSeleccionada, nuevoEstado) {
+  // Cambia si la cita está lista, pendiente o cancelada.
+  async function cambiarEstadoCita(citaSeleccionada: any, nuevoEstado: string) {
     const alertaConfirmacion = await Swal.fire({
       icon: "question",
       title: `¿Cambiar estado a "${nuevoEstado}"?`,
@@ -61,17 +62,18 @@ function AdminCitas() {
         showConfirmButton: false,
       });
     } catch (errorActualizacion) {
+      const errorMessage = errorActualizacion instanceof Error ? errorActualizacion.message : 'Error desconocido';
       Swal.fire({
         icon: "error",
         title: "Error al actualizar",
-        text: `No se pudo cambiar el estado: ${errorActualizacion.message}`,
+        text: `No se pudo cambiar el estado: ${errorMessage}`,
         confirmButtonColor: "#2563EB",
       });
     }
   }
 
-// Borra una cita para siempre si el jefe quiere.
-  async function confirmarEliminacionCita(citaSeleccionada) {
+  // Borra una cita para siempre si el jefe quiere.
+  async function confirmarEliminacionCita(citaSeleccionada: any) {
     const alertaConfirmacion = await Swal.fire({
       icon: "warning",
       title: "¿Eliminar esta cita?",
@@ -97,18 +99,19 @@ function AdminCitas() {
         showConfirmButton: false,
       });
     } catch (errorEliminacion) {
+      const errorMessage = errorEliminacion instanceof Error ? errorEliminacion.message : 'Error desconocido';
       Swal.fire({
         icon: "error",
         title: "Error al eliminar",
-        text: errorEliminacion.message,
+        text: errorMessage,
         confirmButtonColor: "#2563EB",
       });
     }
   }
 
-// Elige el color del aviso según cómo esté la cita.
-  function resolverEstiloEstado(estadoCita) {
-    const mapaEstilos = {
+  // Elige el color del aviso según cómo esté la cita.
+  function resolverEstiloEstado(estadoCita: string) {
+    const mapaEstilos: Record<string, string> = {
       pendiente: "estadoCitaPendiente",
       confirmada: "estadoCitaConfirmada",
       cancelada: "estadoCitaCancelada",
@@ -116,12 +119,12 @@ function AdminCitas() {
     return mapaEstilos[estadoCita] || "";
   }
 
-// Si todavía está cargando, mostramos un aviso.
+  // Si todavía está cargando, mostramos un aviso.
   if (estaCargando) {
     return <IndicadorCarga mensaje="Cargando todas las citas..." />;
   }
 
-// Aquí dibujamos lo que se ve en la pantalla.
+  // Aquí dibujamos lo que se ve en la pantalla.
   return (
     <div id="adminCitasContenedor" className="panelAdmin">
       {/* Un aviso si algo sale mal. */}

@@ -11,7 +11,7 @@ import "../../styles/userStyles/Citas.css";
 function Citas() {
   // Aquí guardamos los datos de tus citas.
   const { usuario } = useAutenticacion();
-  const [listaCitas, setListaCitas] = useState([]);
+  const [listaCitas, setListaCitas] = useState<any[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
   const [mostrarFormularioNuevaCita, setMostrarFormularioNuevaCita] = useState(false);
@@ -33,22 +33,22 @@ function Citas() {
 
   // Estas cajitas de código sirven para mover los datos de tus citas.
 
-// Trae todas tus citas del internet.
+  // Trae todas tus citas del internet.
   async function cargarHistorialCitas() {
     try {
       setEstaCargando(true);
       setMensajeError("");
       const idUsuarioStr = String(usuario.id);
       const citasRecibidas = await ServicioCitas.getCitas();
-      setListaCitas(citasRecibidas.filter(cita => String(cita.idUsuario) === idUsuarioStr));
-    } catch (errorPeticion) {
+      setListaCitas(citasRecibidas.filter((cita: any) => String(cita.idUsuario) === idUsuarioStr));
+    } catch (errorPeticion: any) {
       setMensajeError(`Hubo un error al cargar las citas: ${errorPeticion.message}`);
     } finally {
       setEstaCargando(false);
     }
   }
 
-// Revisa que hayas puesto el día, la hora y el motivo.
+  // Revisa que hayas puesto el día, la hora y el motivo.
   function validarCamposCita() {
     if (!datosNuevaCita.fechaCita) {
       setErrorValidacionCita("Seleccionar una fecha es obligatorio");
@@ -65,18 +65,18 @@ function Citas() {
     return true;
   }
 
-// Anota lo que vas escribiendo en los cuadros.
-  function manejarCambioCampo(eventoAsociado) {
+  // Anota lo que vas escribiendo en los cuadros.
+  function manejarCambioCampo(eventoAsociado: any) {
     const { name, value } = eventoAsociado.target;
     setDatosNuevaCita((estadoAnterior) => ({ ...estadoAnterior, [name]: value }));
   }
 
-// Si eres nuevo, te anota en la lista de pacientes.
+  // Si eres nuevo, te anota en la lista de pacientes.
   async function validarYRegistrarComoPaciente() {
     try {
       const todosLosPacientes = await ServicioPacientes.getPacientes();
       const pacienteExistente = todosLosPacientes.find(
-        (pacienteActual) => pacienteActual.correo === usuario.correo
+        (pacienteActual: any) => pacienteActual.correo === usuario.correo
       );
 
       if (!pacienteExistente) {
@@ -90,12 +90,12 @@ function Citas() {
         };
         await ServicioPacientes.postPacientes(nuevoPerfilPaciente);
       }
-    } catch (errorValidacion) {
+    } catch (errorValidacion: any) {
       console.error("No se pudo registrar como paciente:", errorValidacion);
     }
   }
 
-// Envía tu pedido de cita al internet.
+  // Envía tu pedido de cita al internet.
   async function enviarSolicitudCita() {
     setErrorValidacionCita("");
 
@@ -125,7 +125,7 @@ function Citas() {
         timer: 2300,
         showConfirmButton: false,
       });
-    } catch (errorEnvio) {
+    } catch (errorEnvio: any) {
       Swal.fire({
         icon: "error",
         title: "Houston, tenemos un problema",
@@ -136,8 +136,8 @@ function Citas() {
     }
   }
 
-// Borra tu cita si ya no quieres ir.
-  async function confirmarEliminacionCita(citaSeleccionada) {
+  // Borra tu cita si ya no quieres ir.
+  async function confirmarEliminacionCita(citaSeleccionada: any) {
     const alertaConfirmacion = await Swal.fire({
       icon: "warning",
       title: "¿Deseas cancelar esta cita médica?",
@@ -162,7 +162,7 @@ function Citas() {
         timer: 1800,
         showConfirmButton: false,
       });
-    } catch (errorEliminacion) {
+    } catch (errorEliminacion: any) {
       Swal.fire({
         icon: "error",
         title: "No se pudo cancelar",
@@ -172,9 +172,9 @@ function Citas() {
     }
   }
 
-// Elige el color del aviso según cómo esté tu cita.
-  function resolverEstiloEstadoColor(estadoCita) {
-    const mapaEstilosEstado = {
+  // Elige el color del aviso según cómo esté tu cita.
+  function resolverEstiloEstadoColor(estadoCita: string) {
+    const mapaEstilosEstado: Record<string, string> = {
       pendiente: "estadoCitaPendiente",
       confirmada: "estadoCitaConfirmada",
       cancelada: "estadoCitaCancelada",
@@ -182,12 +182,12 @@ function Citas() {
     return mapaEstilosEstado[estadoCita] || "";
   }
 
-// Si todavía está cargando, mostramos un aviso.
+  // Si todavía está cargando, mostramos un aviso.
   if (estaCargando) {
     return <IndicadorCarga mensaje="Cargando tu historial de citas..." />;
   }
 
-// Aquí dibujamos todo lo que se ve en la pantalla.
+  // Aquí dibujamos todo lo que se ve en la pantalla.
   return (
     <div id="seccionCitasCliente" className="citasCliente">
       {/* El título de arriba. */}
@@ -311,7 +311,7 @@ function Citas() {
             <p>Puedes empezar agendando una utilizando el botón superior.</p>
           </div>
         ) : (
-          listaCitas.map((registroCita) => (
+          listaCitas.map((registroCita: any) => (
             <div key={registroCita.id} className="citasClienteTarjeta">
               {/* Muestra si está aceptada y cuándo es. */}
               <div className="citasClienteTarjetaEncabezado">

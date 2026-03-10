@@ -4,11 +4,11 @@
  * y persiste la sesión en localStorage para mantenerla entre recargas.
  */
 
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import ServicioUsuarios from "../services/ServicioUsuarios";
 
 /** Contexto de autenticación (valor inicial: null) */
-const ContextoAutenticacion = createContext(null);
+const ContextoAutenticacion = createContext<any>(null);
 
 /**
  * ProveedorAutenticacion - Componente proveedor que envuelve la aplicación
@@ -16,7 +16,7 @@ const ContextoAutenticacion = createContext(null);
  * @param {Object} props
  * @param {React.ReactNode} props.children - Componentes hijos que tendrán acceso al contexto.
  */
-function ProveedorAutenticacion({ children }) {
+function ProveedorAutenticacion({ children }: { children: ReactNode }) {
   /** Usuario autenticado o null si no hay sesión */
   const [usuario, setUsuario] = useState(null);
   /** Indica si se está recuperando la sesión de localStorage */
@@ -43,9 +43,9 @@ function ProveedorAutenticacion({ children }) {
    * @param {string} contrasena - Contraseña del usuario.
    * @returns {Promise<Object>} Los datos del usuario autenticado.
    */
-  async function login(correo, contrasena) {
+  async function login(correo: string, contrasena: string) {
     const usuarios = await ServicioUsuarios.getUser();
-    const datosUsuario = usuarios.find(u => u.correo === correo && u.contrasena === contrasena);
+    const datosUsuario = usuarios.find((u: any) => u.correo === correo && u.contrasena === contrasena);
     if (!datosUsuario) throw new Error("Credenciales incorrectas");
     setUsuario(datosUsuario);
     localStorage.setItem("usuarioIncreaseClinic", JSON.stringify(datosUsuario));
@@ -57,12 +57,12 @@ function ProveedorAutenticacion({ children }) {
    * @param {Object} datosRegistro - Datos del nuevo usuario.
    * @returns {Promise<Object>} Los datos del usuario recién creado.
    */
-  async function registro(datosRegistro) {
+  async function registro(datosRegistro: any) {
     const usuarios = await ServicioUsuarios.getUser();
-    if (usuarios.some(u => u.nombreUsuario === datosRegistro.nombreUsuario)) {
+    if (usuarios.some((u: any) => u.nombreUsuario === datosRegistro.nombreUsuario)) {
       throw new Error("El nombre de usuario ya existe");
     }
-    if (usuarios.some(u => u.correo === datosRegistro.correo)) {
+    if (usuarios.some((u: any) => u.correo === datosRegistro.correo)) {
       throw new Error("Este correo electrónico ya está registrado");
     }
     const nuevoUsuario = await ServicioUsuarios.postUser({ ...datosRegistro, rol: "cliente" });
@@ -111,3 +111,4 @@ function useAutenticacion() {
 }
 
 export { ProveedorAutenticacion, useAutenticacion };
+

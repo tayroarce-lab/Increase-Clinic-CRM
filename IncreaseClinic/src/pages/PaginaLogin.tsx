@@ -9,7 +9,11 @@ import { useAutenticacion } from "../context/ContextoAutenticacion";
 import Login from "../components/user/Login";
 
 export default function PaginaLogin() {
-  const { usuario } = useAutenticacion();
+  const { usuario, cargando } = useAutenticacion();
+
+  if (cargando) {
+    return <div className="indicadorCarga">Cargando...</div>;
+  }
 
   // Si ya inició sesión, redirigir al inicio
   if (usuario) {

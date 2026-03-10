@@ -47,6 +47,14 @@
       "nombreCompleto": "Mario Jesús Solís Gracía",
       "correo": "solis@increaseclinic.com",
       "rol": "cliente"
+    },
+    {
+      "id": "0208",
+      "nombreUsuario": "Hector Herrero",
+      "contrasena": "123456",
+      "nombreCompleto": "Hector Herrero",
+      "correo": "herrero@gmail.com",
+      "rol": "cliente"
     }
   ],
   "pacientes": [
@@ -122,6 +130,15 @@
       "fecha": "2026-04-01",
       "hora": "03:00",
       "motivo": "Me duele la rodilla\n",
+      "estado": "confirmada"
+    },
+    {
+      "id": "f20b",
+      "idUsuario": "2",
+      "nombrePaciente": "María García López",
+      "fecha": "2026-03-29",
+      "hora": "20:00",
+      "motivo": "Porque si",
       "estado": "pendiente"
     }
   ]

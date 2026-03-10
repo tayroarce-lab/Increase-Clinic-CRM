@@ -1,17 +1,17 @@
 // Aquí el jefe puede crear otros jefes o borrar usuarios.
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import ServicioUsuarios from "../../services/ServicioUsuarios";
 import { Users, UserPlus, Shield, Trash2, Mail, Lock, UserCircle, AlertCircle, Save, X, Search, Pencil } from "lucide-react";
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/AdminUsuarios.css";
 
 function AdminUsuarios() {
-  const [usuarios, setUsuarios] = useState([]);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [errorFormulario, setErrorFormulario] = useState("");
   const [busqueda, setBusqueda] = useState("");
-  const [usuarioEditando, setUsuarioEditando] = useState(null);
+  const [usuarioEditando, setUsuarioEditando] = useState<any>(null);
 
   const CORREO_ADMIN_PRINCIPAL = "admin@increaseclinic.com";
 
@@ -42,7 +42,7 @@ function AdminUsuarios() {
   }
 
   // Anota lo que escribimos en los cuadros.
-  function manejarCambio(e) {
+  function manejarCambio(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     setFormulario(prev => ({ ...prev, [name]: value }));
   }
@@ -62,7 +62,7 @@ function AdminUsuarios() {
   }
 
   // Abre la ventana para cambiar datos de alguien.
-  function abrirFormularioEditar(usuarioSelec) {
+  function abrirFormularioEditar(usuarioSelec: any) {
     setFormulario({
       nombreUsuario: usuarioSelec.nombreUsuario || "",
       contrasena: "", // Se deja vacía por si no la quiere cambiar.
@@ -78,7 +78,7 @@ function AdminUsuarios() {
   // Guarda al usuario en el internet.
   async function manejarEnvio() {
     setErrorFormulario("");
-    
+
     // Revisa que no falte escribir lo importante.
     if (!formulario.nombreUsuario.trim() || !formulario.correo.trim()) {
       setErrorFormulario("El usuario y el correo son obligatorios.");
@@ -92,18 +92,18 @@ function AdminUsuarios() {
 
     try {
       const todos = await ServicioUsuarios.getUser();
-      
-      const nombreOcupado = todos.find(u => u.nombreUsuario === formulario.nombreUsuario && u.id !== usuarioEditando?.id);
+
+      const nombreOcupado = todos.find((u: any) => u.nombreUsuario === formulario.nombreUsuario && u.id !== usuarioEditando?.id);
       if (nombreOcupado) throw new Error("Ese nombre de usuario ya está usado.");
 
       if (usuarioEditando) {
-        let datosEnviar = { ...formulario };
-        if (!datosEnviar.contrasena) delete datosEnviar.contrasena;
+        const { contrasena, ...datosSinContrasena } = formulario;
+        const datosEnviar = contrasena ? formulario : datosSinContrasena;
 
         await ServicioUsuarios.patchUsuarios(datosEnviar, usuarioEditando.id);
         Swal.fire({ icon: "success", title: "Actualizado", text: "Datos guardados.", timer: 2000, showConfirmButton: false });
       } else {
-        const correoOcupado = todos.find(u => u.correo === formulario.correo);
+        const correoOcupado = todos.find((u: any) => u.correo === formulario.correo);
         if (correoOcupado) throw new Error("Ese correo ya está registrado.");
 
         await ServicioUsuarios.postUser({ ...formulario });
@@ -112,13 +112,13 @@ function AdminUsuarios() {
 
       limpiarFormulario();
       await cargarUsuarios();
-    } catch (error) {
+    } catch (error: any) {
       setErrorFormulario(error.message);
     }
   }
 
   // Borra a un usuario si el jefe quiere, pero no al jefe principal.
-  async function manejarEliminar(usuarioSeleccionado) {
+  async function manejarEliminar(usuarioSeleccionado: any) {
     if (usuarioSeleccionado.correo === CORREO_ADMIN_PRINCIPAL) {
       Swal.fire({
         icon: "error",
@@ -152,7 +152,7 @@ function AdminUsuarios() {
   }
 
   // Busca usuarios por su nombre o correo.
-  const usuariosFiltrados = usuarios.filter(u => 
+  const usuariosFiltrados = usuarios.filter((u: any) =>
     u.nombreUsuario.toLowerCase().includes(busqueda.toLowerCase()) ||
     u.correo.toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -160,18 +160,18 @@ function AdminUsuarios() {
   return (
     <div className="adminUsuarios">
       <div className="panelAdminAcciones">
-        <button 
+        <button
           className="formularioBoton formularioBotonPrimario"
           onClick={abrirFormularioCrear}
         >
           <UserPlus size={18} />
           <span>Crear Usuario</span>
         </button>
-        
+
         <div className="panelAdminBuscador">
           <Search size={16} className="panelAdminIconoBusqueda" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Buscar por usuario o correo..."
             className="formularioCampo"
             value={busqueda}
@@ -213,14 +213,14 @@ function AdminUsuarios() {
                   <td className="tablaCelda tablaCeldaAcciones">
                     {u.correo !== CORREO_ADMIN_PRINCIPAL ? (
                       <>
-                        <button 
+                        <button
                           className="botonAccion botonAccionEditar"
                           onClick={() => abrirFormularioEditar(u)}
                         >
                           <Pencil size={13} />
                           <span>Editar</span>
                         </button>
-                        <button 
+                        <button
                           className="botonAccion botonAccionEliminar"
                           onClick={() => manejarEliminar(u)}
                         >
@@ -246,7 +246,7 @@ function AdminUsuarios() {
             <h2 className="panelAdminModalTitulo">
               {usuarioEditando ? "Editar Usuario" : "Registrar Nuevo Usuario"}
             </h2>
-            
+
             {errorFormulario && (
               <div className="mensajeError">
                 <AlertCircle size={16} />
@@ -257,25 +257,25 @@ function AdminUsuarios() {
             <div className="formulario">
               <div className="formularioGrupo">
                 <label className="formularioEtiqueta">Usuario</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="nombreUsuario"
                   className="formularioCampo"
                   placeholder="Ej: dr_perez"
                   value={formulario.nombreUsuario}
-                  onChange={manejarCambio} 
+                  onChange={manejarCambio}
                 />
               </div>
 
               <div className="formularioGrupo">
                 <label className="formularioEtiqueta">Correo {usuarioEditando && "(No se puede cambiar)"}</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   name="correo"
                   className="formularioCampo"
                   placeholder="admin@increaseclinic.com"
                   value={formulario.correo}
-                  onChange={manejarCambio} 
+                  onChange={manejarCambio}
                   disabled={usuarioEditando != null}
                   style={usuarioEditando ? { backgroundColor: "#e2e8f0", cursor: "not-allowed", color: "#64748b" } : {}}
                 />
@@ -283,19 +283,19 @@ function AdminUsuarios() {
 
               <div className="formularioGrupo">
                 <label className="formularioEtiqueta">Nombre Completo</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="nombreCompleto"
                   className="formularioCampo"
                   placeholder="Nombre de la persona"
                   value={formulario.nombreCompleto}
-                  onChange={manejarCambio} 
+                  onChange={manejarCambio}
                 />
               </div>
 
               <div className="formularioGrupo">
                 <label className="formularioEtiqueta">Rol</label>
-                <select 
+                <select
                   name="rol"
                   className="formularioCampo"
                   value={formulario.rol}
@@ -308,13 +308,13 @@ function AdminUsuarios() {
 
               <div className="formularioGrupo">
                 <label className="formularioEtiqueta">Contraseña {usuarioEditando && "(Déjala vacía para no cambiarla)"}</label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   name="contrasena"
                   className="formularioCampo"
                   placeholder="••••••••"
                   value={formulario.contrasena}
-                  onChange={manejarCambio} 
+                  onChange={manejarCambio}
                 />
               </div>
 

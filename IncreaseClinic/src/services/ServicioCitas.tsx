@@ -1,14 +1,14 @@
 //PATCH
-async function patchCitas(cita,id){
+async function patchCitas(cita: any, id: string) {
     try {
-        const respuesta = await fetch("http://localhost:3001/citas/"+id,{
-            method:"PATCH",
-            headers:{
-                "Content-Type":"application/json"
+        const respuesta = await fetch("http://localhost:3001/citas/" + id, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
             },
-            body:JSON.stringify(cita)
+            body: JSON.stringify(cita)
         })
-        const datosCitas= await respuesta.json();
+        const datosCitas = await respuesta.json();
         return datosCitas;
     } catch (error) {
         console.error("Error al actualizar los cambios", error);
@@ -16,12 +16,12 @@ async function patchCitas(cita,id){
 }
 
 //DELETE
-async function deleteCitas(id){
+async function deleteCitas(id: string) {
     try {
-        const respuesta = await fetch("http://localhost:3001/citas/"+id,{
-            method:"DELETE",
+        const respuesta = await fetch("http://localhost:3001/citas/" + id, {
+            method: "DELETE",
         })
-        const datosCitas= await respuesta.json();
+        const datosCitas = await respuesta.json();
         return datosCitas;
     } catch (error) {
         console.error("Error al Eliminar el registro", error);
@@ -38,7 +38,7 @@ async function getCitas() {
     }
 }
 
-async function postCitas(cita) {
+async function postCitas(cita: any) {
     try {
         const respuesta = await fetch("http://localhost:3001/citas", {
             method: "POST",

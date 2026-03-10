@@ -17,7 +17,7 @@ function Login() {
   const { login } = useAutenticacion();
   const navegar = useNavigate();
 
-// Revisa que el correo y la clave estén bien escritos.
+  // Revisa que el correo y la clave estén bien escritos.
   function validarFormulario() {
     if (!correo.trim()) {
       setMensajeError("El correo es obligatorio");
@@ -34,7 +34,7 @@ function Login() {
     return true;
   }
 
-// Envía tus datos para dejarte entrar.
+  // Envía tus datos para dejarte entrar.
   async function manejarEnvio() {
     setMensajeError("");
 
@@ -60,7 +60,7 @@ function Login() {
       } else {
         navegar("/citas");
       }
-    } catch (errorLogin) {
+    } catch (errorLogin: any) {
       Swal.fire({
         icon: "error",
         title: "Error al iniciar sesión",

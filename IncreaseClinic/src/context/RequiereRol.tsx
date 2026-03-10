@@ -15,26 +15,21 @@ import { useAutenticacion } from "./ContextoAutenticacion";
  * @param {React.ReactNode} props.children - Contenido a renderizar si el rol coincide.
  * @returns {React.ReactNode} Los children si el rol coincide, o redirect al panel correcto.
  */
-function RequiereRol({ rol, children }) {
+function RequiereRol({ rol, children }: { rol: string, children: React.ReactNode }) {
   const { usuario, cargando } = useAutenticacion();
 
-  // Mientras se verifica la sesión, mostrar indicador de carga
   if (cargando) {
     return <div className="indicadorCarga">Cargando...</div>;
   }
 
-  // Si no hay usuario, redirigir al login
   if (!usuario) {
     return <Navigate to="/login" replace />;
   }
-
-  // Si el usuario no tiene el rol requerido, redirigirlo a su panel correspondiente
   if (usuario.rol !== rol) {
     const rutaRedireccion = usuario.rol === "admin" ? "/admin" : "/citas";
     return <Navigate to={rutaRedireccion} replace />;
   }
 
-  // Si tiene el rol correcto, renderizar el contenido
   return children;
 }
 

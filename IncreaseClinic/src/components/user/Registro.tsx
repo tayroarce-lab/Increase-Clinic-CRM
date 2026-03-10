@@ -20,7 +20,7 @@ function Registro() {
   const { registro } = useAutenticacion();
   const navegar = useNavigate();
 
-// Revisa que hayas escrito todo bien para crear tu cuenta.
+  // Revisa que hayas escrito todo bien para crear tu cuenta.
   function validarFormulario() {
     if (!nombreUsuario.trim()) {
       setMensajeError("El nombre de usuario es obligatorio");
@@ -57,7 +57,7 @@ function Registro() {
     return true;
   }
 
-// Envía tus datos al internet para crear tu cuenta.
+  // Envía tus datos al internet para crear tu cuenta.
   async function manejarEnvio() {
     setMensajeError("");
 
@@ -83,7 +83,7 @@ function Registro() {
       });
 
       navegar("/citas");
-    } catch (errorRegistro) {
+    } catch (errorRegistro: any) {
       Swal.fire({
         icon: "error",
         title: "Error al registrar",

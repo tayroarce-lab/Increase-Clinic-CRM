@@ -1,9 +1,9 @@
 //PATCH
-async function patchUsuarios(usuario,id){
+async function patchUsuarios(usuario: any, id: string) {
 
-       try {
+    try {
 
-        const respuesta = await fetch("http://localhost:3001/usuarios/"+id,{
+        const respuesta = await fetch("http://localhost:3001/usuarios/" + id, {
             method:"PATCH",
             headers:{
                 "Content-Type":"application/json"
@@ -28,7 +28,7 @@ async function patchUsuarios(usuario,id){
 
 
 
-async function deleteUsuarios(id){
+async function deleteUsuarios(id: string) {
 
        try {
 
@@ -60,7 +60,7 @@ async function getUser() {
     }
 }
 
-async function postUser(usuario) {
+async function postUser(usuario: any) {
     try {
         const respuesta = await fetch("http://localhost:3001/usuarios", {
             method: "POST",

@@ -7,14 +7,24 @@ import { Users, CalendarDays, UserPlus, AlertCircle, Pencil, Trash2, User, Phone
 import Swal from "sweetalert2";
 import "../../styles/adminStyles/Admin.css";
 
+interface Paciente {
+  id?: string;
+  nombre: string;
+  edad: number | string;
+  telefono: string;
+  correo: string;
+  diagnostico: string;
+  fechaRegistro?: string;
+}
+
 // Esta es la pantalla principal para el administrador.
 function PanelAdmin() {
   // Aquí guardamos cosas importantes.
-  const [pacientes, setPacientes] = useState([]);
+  const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [estaCargando, setEstaCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [pacienteEditando, setPacienteEditando] = useState(null);
+  const [pacienteEditando, setPacienteEditando] = useState<Paciente | null>(null);
   const [errorFormulario, setErrorFormulario] = useState("");
 
   // Para saber qué botón tocamos.
@@ -36,21 +46,21 @@ function PanelAdmin() {
 
   // Estas cajitas de código sirven para mover datos.
 
-// Trae a todos los pacientes del internet.
+  // Trae a todos los pacientes del internet.
   async function cargarPacientes() {
     try {
       setEstaCargando(true);
       setMensajeError("");
       const datos = await ServicioPacientes.getPacientes();
       setPacientes(datos);
-    } catch (errorPeticion) {
+    } catch (errorPeticion: any) {
       setMensajeError("Error al cargar los pacientes: " + errorPeticion.message);
     } finally {
       setEstaCargando(false);
     }
   }
 
-// Borra lo que escribimos y cierra la ventanita.
+  // Borra lo que escribimos y cierra la ventanita.
   function limpiarFormulario() {
     setFormulario({ nombre: "", edad: "", telefono: "", correo: "", diagnostico: "" });
     setPacienteEditando(null);
@@ -58,14 +68,14 @@ function PanelAdmin() {
     setErrorFormulario("");
   }
 
-// Abre la ventana para anotar a alguien nuevo.
+  // Abre la ventana para anotar a alguien nuevo.
   function abrirFormularioCrear() {
     limpiarFormulario();
     setMostrarFormulario(true);
   }
 
-// Abre la ventana para cambiar datos de alguien.
-  function abrirFormularioEditar(pacienteSeleccionado) {
+  // Abre la ventana para cambiar datos de alguien.
+  function abrirFormularioEditar(pacienteSeleccionado: Paciente) {
     setFormulario({
       nombre: pacienteSeleccionado.nombre,
       edad: pacienteSeleccionado.edad.toString(),
@@ -78,13 +88,13 @@ function PanelAdmin() {
     setErrorFormulario("");
   }
 
-// Revisa que no nos falte escribir nada.
+  // Revisa que no nos falte escribir nada.
   function validarFormulario() {
     if (!formulario.nombre.trim()) {
       setErrorFormulario("El nombre es obligatorio");
       return false;
     }
-    if (!formulario.edad || isNaN(formulario.edad) || Number(formulario.edad) <= 0) { //isNaN = is not a number
+    if (!formulario.edad || isNaN(Number(formulario.edad)) || Number(formulario.edad) <= 0) { //isNaN = is not a number
       setErrorFormulario("Ingresa una edad válida");
       return false;
     }
@@ -99,14 +109,14 @@ function PanelAdmin() {
     return true;
   }
 
-// Anota lo que vamos escribiendo en los cuadros.
-  function manejarCambio(evento) {
+  // Anota lo que vamos escribiendo en los cuadros.
+  function manejarCambio(evento: any) {
     const { name, value } = evento.target;
     // Los 3 puntos '...' copian lo de antes para no borrar nada al escribir.
     setFormulario((estadoAnterior) => ({ ...estadoAnterior, [name]: value }));
   }
 
-// Manda los datos al internet para guardarlos.
+  // Manda los datos al internet para guardarlos.
   async function manejarEnvio() {
     setErrorFormulario("");
 
@@ -117,12 +127,12 @@ function PanelAdmin() {
       edad: Number(formulario.edad),
       fechaRegistro: pacienteEditando
         ? pacienteEditando.fechaRegistro
-        : new Date().toISOString().split("T")[0], 
+        : new Date().toISOString().split("T")[0],
     };
 
     try {
       if (pacienteEditando) {
-        await ServicioPacientes.patchPacientes(datosPaciente, pacienteEditando.id);
+        await ServicioPacientes.patchPacientes(datosPaciente, pacienteEditando.id!);
         Swal.fire({
           icon: "success",
           title: "Paciente actualizado",
@@ -142,7 +152,7 @@ function PanelAdmin() {
       }
       limpiarFormulario();
       await cargarPacientes();
-    } catch (errorEnvio) {
+    } catch (errorEnvio: any) {
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -153,8 +163,8 @@ function PanelAdmin() {
     }
   }
 
-// Borra a alguien si el jefe dice que sí.
-  async function manejarEliminar(pacienteSeleccionado) {
+  // Borra a alguien si el jefe dice que sí.
+  async function manejarEliminar(pacienteSeleccionado: Paciente) {
     const resultado = await Swal.fire({
       icon: "warning",
       title: "¿Eliminar paciente?",
@@ -169,7 +179,7 @@ function PanelAdmin() {
     if (!resultado.isConfirmed) return;
 
     try {
-      await ServicioPacientes.deletePacientes(pacienteSeleccionado.id);
+      await ServicioPacientes.deletePacientes(pacienteSeleccionado.id!);
       await cargarPacientes();
       Swal.fire({
         icon: "success",
@@ -178,7 +188,7 @@ function PanelAdmin() {
         timer: 1500,
         showConfirmButton: false,
       });
-    } catch (errorEliminacion) {
+    } catch (errorEliminacion: any) {
       Swal.fire({
         icon: "error",
         title: "Error al eliminar",
@@ -188,10 +198,10 @@ function PanelAdmin() {
     }
   }
 
-// Si todavía está cargando, mostramos un aviso.
+  // Si todavía está cargando, mostramos un aviso.
   if (estaCargando) return <IndicadorCarga mensaje="Cargando pacientes..." />;
 
-// Aquí dibujamos todo lo que se ve en pantalla.
+  // Aquí dibujamos todo lo que se ve en pantalla.
   return (
     <div id="panelAdmin" className="panelAdmin">
       {/* El título de arriba. */}

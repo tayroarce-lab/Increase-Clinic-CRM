@@ -1,14 +1,14 @@
 //PATCH
-async function patchPacientes(paciente,id){
+async function patchPacientes(paciente: any, id: string) {
     try {
-        const respuesta = await fetch("http://localhost:3001/pacientes/"+id,{
-            method:"PATCH",
-            headers:{
-                "Content-Type":"application/json"
+        const respuesta = await fetch("http://localhost:3001/pacientes/" + id, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
             },
-            body:JSON.stringify(paciente)
+            body: JSON.stringify(paciente)
         })
-        const datosPacientes= await respuesta.json();
+        const datosPacientes = await respuesta.json();
         return datosPacientes;
     } catch (error) {
         console.error("Error al actualizar los cambios", error);
@@ -16,12 +16,12 @@ async function patchPacientes(paciente,id){
 }
 
 //DELETE    
-async function deletePacientes(id){
+async function deletePacientes(id: string) {
     try {
-        const respuesta = await fetch("http://localhost:3001/pacientes/"+id,{
-            method:"DELETE",
+        const respuesta = await fetch("http://localhost:3001/pacientes/" + id, {
+            method: "DELETE",
         })
-        const datosPacientes= await respuesta.json();
+        const datosPacientes = await respuesta.json();
         return datosPacientes;
     } catch (error) {
         console.error("Error al Eliminar el registro", error);
@@ -38,7 +38,7 @@ async function getPacientes() {
     }
 }
 
-async function postPacientes(paciente) {
+async function postPacientes(paciente: any) {
     try {
         const respuesta = await fetch("http://localhost:3001/pacientes", {
             method: "POST",
